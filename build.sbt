@@ -36,8 +36,8 @@ val jmeLibs = Seq(
   "org.jmonkeyengine" % "jme3-terrain" % jmeVer,
   "org.jmonkeyengine" % "jme3-jogg" % jmeVer,
 
-  //  "org.jmonkeyengine" % "jme3-jme3-bullet-native" % jmeVer,
-  //  "org.jmonkeyengine" % "jme3-bullet " % jmeVer,
+    "org.jmonkeyengine" % "jme3-bullet-native" % jmeVer,
+    "org.jmonkeyengine" % "jme3-bullet" % jmeVer,
 )
 
 libraryDependencies ++= jmeLibs
