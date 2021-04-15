@@ -83,7 +83,7 @@ class PhysicsExample extends SimpleApplication {
   }
 
 
-  def initShooting(): Unit = {x`
+  def initShooting(): Unit = {
     setDisplayStatView(false)
     guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt")
     val ch = new BitmapText(guiFont, false)
