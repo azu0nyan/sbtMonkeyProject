@@ -4,6 +4,7 @@ package examlples
 import com.jme3.font.BitmapText
 import com.jme3.app.SimpleApplication
 import com.jme3.bullet.BulletAppState
+import com.jme3.bullet.collision.shapes.BoxCollisionShape
 import com.jme3.bullet.collision.{PhysicsCollisionEvent, PhysicsCollisionListener}
 import com.jme3.bullet.control.RigidBodyControl
 import com.jme3.collision.{CollisionResult, CollisionResults}
@@ -103,7 +104,6 @@ class PhysicsExample extends SimpleApplication {
           val ball = makeSphere(cam.getLocation, 5f, "ball", ColorRGBA.Green)
           val ballPhy = makeRigid(ball, 5f)
           ballPhy.setLinearVelocity(cam.getDirection().normalize().mult(50f))
-          ball.setUserData("phy", ballPhy)
         }
       }
     }, "shoot")
@@ -111,7 +111,7 @@ class PhysicsExample extends SimpleApplication {
       override def onAnalog(name: String, value: Float, tpf: Float): Unit = {
           rootNode.depthFirstTraversal((spatial: Spatial) => {
             if(spatial.getName == "ball"){
-              val rb = spatial.getUserData("phy").asInstanceOf[RigidBodyControl]
+              val rb = spatial.getControl(classOf[RigidBodyControl])
 //              rb.applyImpulse(new Vector3f(0f, rb.getMass, 0f).mult( 20f * value), new Vector3f(0f, 0f, 0f))
               rb.applyForce(new Vector3f(0f, rb.getMass, 0f).mult( 20f), new Vector3f(0f, 0f, 0f))
             }
