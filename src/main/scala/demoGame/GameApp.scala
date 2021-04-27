@@ -41,7 +41,14 @@ class GameApp extends SimpleApplication {
     GraphicsUtils.addShadows(sun)
     GraphicsUtils.addSSAO()
     GraphicsUtils.addSkyBox()
-    initMap()
+    val levelGeoms = initMap()
+    //nav mesh
+    val navMesh = NavMeshGeneration.generate(levelGeoms)
+    val navMeshMesh = NavMeshGeneration.meshDataToGeometry(navMesh)
+    val navMeshGeom = new Geometry("navMesh", navMeshMesh)
+    navMeshGeom.setMaterial(MakerUtils.newWireframe(ColorRGBA.Cyan))
+    rootNode.attachChild(navMeshGeom)
+
     val char = initCharacter()
 
 
@@ -51,26 +58,13 @@ class GameApp extends SimpleApplication {
     val chaseCam = new ChaseCamera(cam, char, inputManager)
     chaseCam.setInvertVerticalAxis(true)
     chaseCam.setDragToRotate(true)
-
+    chaseCam.setMaxDistance(150)
+    chaseCam.setDefaultDistance(100)
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
 
-//    import com.jme3.input.CameraInput
-//    inputManager.deleteMapping(CameraInput.CHASECAM_TOGGLEROTATE)
-//    chaseCam.setMinVerticalRotation(-FastMath.PI / 2)
-//    chaseCam.setDefaultVerticalRotation(-FastMath.PI / 2)
-//    chaseCam.setDefaultHorizontalRotation(-FastMath.PI / 2)
-
-//    chaseCam.setRo
-    //    bulletAppState.setDebugEnabled(true)
   }
 
 
-  override def simpleUpdate(tpf: Float): Unit = {
-    //    val rot = new Quaternion().fromAngleAxis(math.random().toFloat, new Vector3f(math.random().toFloat, math.random().toFloat, math.random().toFloat))
-    //    println(rot)
-    //    gg.setLocalRotation(rot)
-    //    gg.setLocalScale(math.random().toFloat * 10)
-  }
 
 
   var gg: Geometry = _
@@ -101,6 +95,7 @@ class GameApp extends SimpleApplication {
   }
 
   def initMap() = {
+    var geoms:Seq[Geometry] = Seq()
     val mapSize = 100f
 
     val mapImg = ImageIO.read(getClass.getClassLoader.getResource("maps/lvl1.png"))
@@ -110,7 +105,7 @@ class GameApp extends SimpleApplication {
       for (i <- 0 until msx) yield for (j <- 0 until msy) yield mapImg.getRGB(i, j)
     val floor = MakerUtils.makeBox(new Vector3f(0f, -0.1f, 0f), new Vector3f(mapSize / 2, 0.1f, mapSize / 2), "floor", MakerUtils.makeShaded(ColorRGBA.Gray))
     MakerUtils.makeRigid(floor, 0)
-
+    geoms = geoms :+ floor
     val angle = new Vector3f(-mapSize / 2f, blockSize / 2f, -mapSize / 2f) + new Vector3f(blockSize / 2f, 0f, blockSize / 2f)
 
     for (i <- 0 until msx; j <- 0 until msy) {
@@ -119,9 +114,16 @@ class GameApp extends SimpleApplication {
         val c = ColorUtils.colorRGBAFromInt(map(i)(j))
         val b = MakerUtils.makeBox(pos, blockSize / 2f, "wall", MakerUtils.makeShaded(c))
         MakerUtils.makeRigid(b, 0f)
+        geoms = geoms :+ b
       }
 
     }
+    geoms
+  }
+
+
+  override def simpleUpdate(tpf: Float): Unit = {
+
   }
 
 

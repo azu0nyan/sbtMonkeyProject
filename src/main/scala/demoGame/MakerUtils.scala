@@ -40,8 +40,17 @@ object MakerUtils {
     mat.setColor("Diffuse", color)
     mat.setColor("Specular", ColorRGBA.White)
     mat.setFloat("Shininess", 64f)
+    mat.setColor("Ambient", color.mult(0.2f).add(ColorRGBA.White.mult(0.1f)))
+
     mat
   }
+  def newWireframe(colorRGBA: ColorRGBA)(implicit  app:SimpleApplication): Material = {
+    val material = new Material(app.getAssetManager, "Common/MatDefs/Misc/Unshaded.j3md")
+    material.getAdditionalRenderState.setWireframe(true)
+    material.setColor("Color", colorRGBA)
+    material
+  }
+
 
   def makeShadedTextured(diffusePath: String = "Textures/Terrain/Pond/Pond.jpg",
                          normalPath: String = "Textures/Terrain/Pond/Pond_normal.png")
@@ -53,6 +62,7 @@ object MakerUtils {
     mat.setColor("Diffuse", ColorRGBA.White)
     mat.setColor("Specular", ColorRGBA.White)
     mat.setFloat("Shininess", 64f) // [0,128]
+    mat.setColor("Ambient", ColorRGBA.White.mult(0.2f))
     mat
   }
 
@@ -76,6 +86,7 @@ object MakerUtils {
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(pos)
     app.getRootNode.attachChild(box) // make the cube appear in the scene
+    box.setShadowMode(ShadowMode.CastAndReceive)
     box
   }
 
@@ -86,6 +97,7 @@ object MakerUtils {
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(pos)
     app.getRootNode.attachChild(box) // make the cube appear in the scene
+    box.setShadowMode(ShadowMode.CastAndReceive)
     box
   }
 }

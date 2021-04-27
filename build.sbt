@@ -1,12 +1,12 @@
 name := "sbtMonkeyProject"
 
-version := "0.1"
+version := "0.2"
 
 scalaVersion := "2.13.5"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8", // Option and arguments on same  line
-  "-Xfatal-warnings",  // New lines for each options
+  "-Xfatal-warnings", // New lines for each options
   "-deprecation",
   "-unchecked",
   "-language:implicitConversions",
@@ -19,6 +19,17 @@ scalacOptions ++= Seq(
 //JME
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("jmonkeyengine", "org.jmonkeyengine")
+
+
+//val recastVer = "1.3.2"
+val recastLibs = Seq(
+  "org.recast4j" % "recast" % "1.3.2",
+  "org.recast4j" % "detour" % "1.3.2",
+  "org.recast4j" % "detour-crowd" % "1.3.2",
+  "org.recast4j" % "detour-tile-cache" % "1.3.2",
+  "org.recast4j" % "detour-extras" % "1.3.2",
+  "org.recast4j" % "detour-dynamic" % "1.3.2",
+)
 
 val jmeVer = "3.3.2-stable"
 val jmeLibs = Seq(
@@ -36,10 +47,11 @@ val jmeLibs = Seq(
   "org.jmonkeyengine" % "jme3-terrain" % jmeVer,
   "org.jmonkeyengine" % "jme3-jogg" % jmeVer,
 
-    "org.jmonkeyengine" % "jme3-bullet-native" % jmeVer,
-    "org.jmonkeyengine" % "jme3-bullet" % jmeVer,
+  "org.jmonkeyengine" % "jme3-bullet-native" % jmeVer,
+  "org.jmonkeyengine" % "jme3-bullet" % jmeVer,
 )
 
 libraryDependencies ++= jmeLibs
-libraryDependencies += "ch.qos.logback"  %  "logback-classic"     % "1.2.3"
+libraryDependencies ++= recastLibs
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
