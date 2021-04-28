@@ -5,6 +5,7 @@ import com.jme3.bullet.BulletAppState
 import com.jme3.math.{ColorRGBA, FastMath, Matrix3f, Quaternion, Ray, Vector3f}
 import com.jme3.system.AppSettings
 import Vector3FHelper._
+import com.jme3.bullet.control.BetterCharacterControl
 import com.jme3.collision.CollisionResults
 import com.jme3.input.{ChaseCamera, KeyInput}
 import com.jme3.input.controls.KeyTrigger
@@ -12,6 +13,7 @@ import com.jme3.scene.{Geometry, Mesh, Node, Spatial}
 
 import java.io.File
 import javax.imageio.ImageIO
+import scala.util.Random
 
 object GameApp {
   def main(args: Array[String]): Unit = {
@@ -28,7 +30,7 @@ object GameApp {
 class GameApp extends SimpleApplication {
   implicit val app: SimpleApplication = this
   implicit var bulletAppState: BulletAppState = _
-
+  var nav:Navigation = _
 
   override def simpleInitApp(): Unit = {
     //    flyCam.setMoveSpeed(100)
@@ -42,25 +44,35 @@ class GameApp extends SimpleApplication {
     GraphicsUtils.addSSAO()
     GraphicsUtils.addSkyBox()
     val levelGeoms = initMap()
-    //nav mesh
-    val navMesh = NavMeshGeneration.generate(levelGeoms)
-    val navMeshMesh = NavMeshGeneration.meshDataToGeometry(navMesh)
-    val navMeshGeom = new Geometry("navMesh", navMeshMesh)
-    navMeshGeom.setMaterial(MakerUtils.newWireframe(ColorRGBA.Cyan))
-    rootNode.attachChild(navMeshGeom)
 
-    val char = initCharacter()
+    //nav mesh
+    nav = new Navigation(levelGeoms)
+
+    val (playerCharacter, charCont) = initCharacter()
 
 
 //    cam.setLocation(new Vector3f(0f, 100f, 0f))
     //    cam.lookAt(0f, new Vector3f(0, 1, 0))
     flyCam.setEnabled(false)
-    val chaseCam = new ChaseCamera(cam, char, inputManager)
+    val chaseCam = new ChaseCamera(cam, playerCharacter, inputManager)
     chaseCam.setInvertVerticalAxis(true)
     chaseCam.setDragToRotate(true)
     chaseCam.setMaxDistance(150)
     chaseCam.setDefaultDistance(100)
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
+
+
+
+    for(i <- 0 until 5){
+      val (unitSp, bcc) = makeUnit(ColorRGBA.Red,
+        new Vector3f((new Random().nextFloat() - .5f) *100, 0f,(new Random().nextFloat() - .5f ) *100f ),
+        new Vector3f(.3f, .6f, .7f ))
+      val navC = new NavigationControl(bcc, nav, 5f)
+      val botCC = new BotAiControl(navC, playerCharacter)
+      unitSp.addControl(navC)
+      unitSp.addControl(botCC)
+
+    }
 
   }
 
@@ -68,7 +80,13 @@ class GameApp extends SimpleApplication {
 
 
   var gg: Geometry = _
-  def initCharacter(): Spatial = {
+  def makeUnit(color: ColorRGBA, pos:Vector3f, size:Vector3f):(Spatial, BetterCharacterControl) = {
+    val geom = MakerUtils.makeBox(pos, size, "unit", MakerUtils.makeShaded(color))
+    (geom, MakerUtils.makeCharacterControl(geom))
+  }
+
+
+  def initCharacter(): (Spatial, BetterCharacterControl) = {
     val r = new Ray(new Vector3f(0, 100, 0), new Vector3f(0, -1, 0))
     val res = new CollisionResults
     rootNode.collideWith(r, res)
@@ -79,18 +97,20 @@ class GameApp extends SimpleApplication {
     val g = MakerUtils.makeCylinder(new Vector3f(0f, .75f, 0f), .5f, 1.5f, "player", MakerUtils.makeShaded(ColorRGBA.Pink))
     val rot = new Quaternion().fromAngleAxis(FastMath.HALF_PI, new Vector3f(1, 0, 0))
     g.setLocalRotation(rot)
-
     val dummyParent = new Node()
     rootNode.attachChild(dummyParent)
     g.removeFromParent()
     dummyParent.attachChild(g)
+
     val cc = MakerUtils.makeCharacterControl(dummyParent)
     //    cc.setWalkDirection(new Vector3f(1f, 0f, 1f))
     cc.setJumpForce(new Vector3f(0, 50, 0))
     cc.warp(pos)
 
     dummyParent.addControl(new CharacterInputControl(cc))
-    dummyParent
+//    dummyParent.addControl(new NavigationControl(cc, nav, 10))
+//    dummyParent.getControl(classOf[NavigationControl]).moveTo(  new Vector3f(50f, 0f, 50f))
+    (dummyParent, cc)
 
   }
 

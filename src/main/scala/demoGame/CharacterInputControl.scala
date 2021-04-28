@@ -15,7 +15,7 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
   var isRight:Boolean = false
   var isForward:Boolean = false
   var isBackward:Boolean = false
-  var speed:Float = 5f
+  var speed:Float = 25f
 
   app.getInputManager.addMapping("chLeft", new KeyTrigger(KeyInput.KEY_A))
   app.getInputManager.addMapping("chRight", new KeyTrigger(KeyInput.KEY_D))

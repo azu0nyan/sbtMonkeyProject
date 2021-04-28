@@ -45,15 +45,15 @@ object NavMeshGeneration {
   /** The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu].
    * cs and ch define voxel/grid/cell size. So their values have significant side effects on all parameters defined in voxel units.
    * The minimum value for this parameter depends on the platform's floating point accuracy, with the practical minimum usually around 0.05. */
-  val m_cellSize = 0.05f
+  val m_cellSize = 0.5f
   /** The y-axis cell size to use for fields. [Limit: > 0] [Units: wu].
    * cs and ch define voxel/grid/cell size. So their values have significant side effects on all parameters defined in voxel units.
    * The minimum value for this parameter depends on the platform's floating point accuracy, with the practical minimum usually around 0.05. */
-  val m_cellHeight = 0.2f
+  val m_cellHeight = 0.5f
 
 
   val m_agentHeight = 1.5f
-  val m_agentRadius = 0.35f
+  val m_agentRadius = 0.5f
   val m_agentMaxClimb = 0.9f
   val m_agentMaxSlope = 45.0f
 

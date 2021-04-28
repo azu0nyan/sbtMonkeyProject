@@ -6,9 +6,11 @@ import com.jme3.bullet.control.{BetterCharacterControl, RigidBodyControl}
 import com.jme3.material.Material
 import com.jme3.math.{ColorRGBA, Vector3f}
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
+import com.jme3.scene.debug.Arrow
 import com.jme3.scene.{Geometry, Node, Spatial}
 import com.jme3.scene.shape.{Box, Cylinder, Sphere}
 import com.jme3.util.TangentBinormalGenerator
+import demoGame.Vector3FHelper.V3Helper
 
 object MakerUtils {
 
@@ -17,6 +19,7 @@ object MakerUtils {
     val cc = new BetterCharacterControl(.5f, 1.5f, 10f)
     g.addControl(cc)
     app.getStateManager.getState(classOf[BulletAppState]).getPhysicsSpace.add(cc)
+    cc.setJumpForce(new Vector3f(0, 50, 0))
     cc
   }
 
@@ -76,6 +79,17 @@ object MakerUtils {
 
     TangentBinormalGenerator.generate(b)
     box.setShadowMode(ShadowMode.CastAndReceive)
+    box
+  }
+
+  def makeArrow(from: Vector3f, to: Vector3f, name: String, mat: Material)(implicit  app:SimpleApplication): Geometry = {
+    val b = new Arrow(to - from) // create cube shape
+    val box = new Geometry(name, b) // create cube geometry from the shape
+
+    box.setMaterial(mat) // set the cube's material
+    box.setLocalTranslation(from)
+    app.getRootNode.attachChild(box) // make the cube appear in the scene
+
     box
   }
 
