@@ -38,6 +38,7 @@ class GameApp extends SimpleApplication {
 
     bulletAppState = new BulletAppState()
     stateManager.attach(bulletAppState)
+//    bulletAppState.setDebugEnabled(true)
     val sun = GraphicsUtils.addSun()
     GraphicsUtils.addAmbient()
     GraphicsUtils.addShadows(sun)
@@ -114,7 +115,7 @@ class GameApp extends SimpleApplication {
 
   }
 
-  def initMap() = {
+  def initMap():Seq[Geometry] = {
     var geoms:Seq[Geometry] = Seq()
     val mapSize = 100f
 

@@ -30,6 +30,7 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
     camDir.y = 0
     camLeft.y = 0
     camDir.negateLocal()
+    camDir.normalizeLocal()
     camLeft.normalizeLocal()
 
     val dir:Vector3f = new Vector3f()
@@ -48,7 +49,7 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
       case "chRight" => isRight = isPressed
       case "chForward" => isForward = isPressed
       case "chBackward" => isBackward = isPressed
-      case "chJump"if isPressed =>
+      case "chJump" if isPressed =>
         character.jump()
       case _ =>
     }

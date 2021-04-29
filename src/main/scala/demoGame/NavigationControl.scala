@@ -58,14 +58,13 @@ class NavigationControl(control: BetterCharacterControl,
       if(currentPath.isEmpty) {
         pathCompleted = true
         control.setViewDirection(new Vector3f(0, 0, 0))
-      }
-      else {
+      }   else {
         val target = currentPath.head
         val direction = target - currentPosition
         control.setWalkDirection(direction.normalize() * speed)
       }
     } else {
-      control.setViewDirection(new Vector3f(0, 0, 0))
+      control.setWalkDirection(new Vector3f(0, 0, 0))
     }
   }
 

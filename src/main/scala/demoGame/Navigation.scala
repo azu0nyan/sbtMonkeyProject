@@ -7,15 +7,17 @@ import org.recast4j.detour.{DefaultQueryFilter, FindNearestPolyResult, NavMesh, 
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
-class Navigation(seq: Seq[Geometry])(implicit app: SimpleApplication) {
+class Navigation(seq: Seq[Geometry], showDebug:Boolean = true)(implicit app: SimpleApplication) {
   val meshData = NavMeshGeneration.generate(seq)
   val navMeshMesh = NavMeshGeneration.meshDataToGeometry(meshData)
   val navMeshGeom = new Geometry("navMesh", navMeshMesh)
-  navMeshGeom.setMaterial(MakerUtils.newWireframe(ColorRGBA.Cyan))
-  app.getRootNode.attachChild(navMeshGeom)
+  if(showDebug) {
+    navMeshGeom.setMaterial(MakerUtils.newWireframe(ColorRGBA.Cyan))
+    app.getRootNode.attachChild(navMeshGeom)
+  }
   val navMesh = new NavMesh(meshData, NavMeshGeneration.m_vertsPerPoly, 1)
 
-  def findNearestPoly(p: Vector3f, extents: Vector3f = new Vector3f(100, 100, 100)): Result[FindNearestPolyResult] = {
+  def findNearestPoly(p: Vector3f, extents: Vector3f = new Vector3f(10, 10, 10)): Result[FindNearestPolyResult] = {
     val query: NavMeshQuery = new NavMeshQuery(navMesh)
     query.findNearestPoly(p.toArray(Array.ofDim[Float](3)),
       extents.toArray(Array.ofDim[Float](3)), new DefaultQueryFilter())
