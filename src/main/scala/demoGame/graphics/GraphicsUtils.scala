@@ -1,11 +1,11 @@
-package demoGame
+package demoGame.graphics
 
 import com.jme3.app.SimpleApplication
 import com.jme3.light.{AmbientLight, DirectionalLight}
 import com.jme3.math.{ColorRGBA, Vector3f}
 
 object GraphicsUtils {
-  def addAmbient()(implicit  app:SimpleApplication):AmbientLight = {
+  def addAmbient()(implicit app: SimpleApplication): AmbientLight = {
     import com.jme3.light.AmbientLight
     import com.jme3.math.ColorRGBA
     val al = new AmbientLight
@@ -14,7 +14,7 @@ object GraphicsUtils {
     al
   }
 
-  def addSun()(implicit  app:SimpleApplication): DirectionalLight = {
+  def addSun()(implicit app: SimpleApplication): DirectionalLight = {
     val sun: DirectionalLight = new DirectionalLight
     sun.setDirection(new Vector3f(1, -1, -(2)).normalizeLocal)
     sun.setColor(ColorRGBA.White)
@@ -22,10 +22,9 @@ object GraphicsUtils {
     sun
 
   }
-  def addShadows(light:DirectionalLight)(implicit  app:SimpleApplication) = {
+  def addShadows(light: DirectionalLight)(implicit app: SimpleApplication) = {
     import com.jme3.post.FilterPostProcessor
-    import com.jme3.shadow.DirectionalLightShadowFilter
-    import com.jme3.shadow.DirectionalLightShadowRenderer
+    import com.jme3.shadow.{DirectionalLightShadowFilter, DirectionalLightShadowRenderer}
     val SHADOWMAP_SIZE = 1024
     val dlsr = new DirectionalLightShadowRenderer(app.getAssetManager, SHADOWMAP_SIZE, 3)
     dlsr.setLight(light)
@@ -41,7 +40,7 @@ object GraphicsUtils {
     //    rootNode.setShadowMode(ShadowMode.CastAndReceive)
   }
 
-  def addSSAO()(implicit  app:SimpleApplication) = {
+  def addSSAO()(implicit app: SimpleApplication) = {
     import com.jme3.post.FilterPostProcessor
     import com.jme3.post.ssao.SSAOFilter
     val fpp = new FilterPostProcessor(app.getAssetManager)
@@ -50,7 +49,7 @@ object GraphicsUtils {
     app.getViewPort.addProcessor(fpp)
   }
 
-  def addSkyBox()(implicit  app:SimpleApplication) = {
+  def addSkyBox()(implicit app: SimpleApplication) = {
     import com.jme3.util.SkyFactory
     app.getRootNode.attachChild(
       SkyFactory.createSky(app.getAssetManager, "Textures/Sky/Bright/BrightSky.dds", SkyFactory.EnvMapType.CubeMap)

@@ -8,7 +8,7 @@ import com.jme3.math.Vector3f
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
 
-import Vector3FHelper._
+import JmeImplicits3FHelper._
 
 class CharacterInputControl(character:BetterCharacterControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
   var isLeft:Boolean = false
@@ -40,6 +40,7 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
     if(isBackward) dir += camDir
 
     character.setWalkDirection(dir.normalize.mult(speed))
+    character.setViewDirection(dir.normalize())
   }
 
   override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}

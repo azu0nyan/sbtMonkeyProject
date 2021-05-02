@@ -12,7 +12,7 @@ class Navigation(seq: Seq[Geometry], showDebug:Boolean = true)(implicit app: Sim
   val navMeshMesh = NavMeshGeneration.meshDataToGeometry(meshData)
   val navMeshGeom = new Geometry("navMesh", navMeshMesh)
   if(showDebug) {
-    navMeshGeom.setMaterial(MakerUtils.newWireframe(ColorRGBA.Cyan))
+    navMeshGeom.setMaterial(MakerUtils.makeWireframe(ColorRGBA.Cyan))
     app.getRootNode.attachChild(navMeshGeom)
   }
   val navMesh = new NavMesh(meshData, NavMeshGeneration.m_vertsPerPoly, 1)

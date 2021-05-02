@@ -4,13 +4,14 @@ import com.jme3.app.SimpleApplication
 import com.jme3.bullet.BulletAppState
 import com.jme3.bullet.control.{BetterCharacterControl, RigidBodyControl}
 import com.jme3.material.Material
+import com.jme3.material.RenderState.BlendMode
 import com.jme3.math.{ColorRGBA, Vector3f}
-import com.jme3.renderer.queue.RenderQueue.ShadowMode
+import com.jme3.renderer.queue.RenderQueue.{Bucket, ShadowMode}
 import com.jme3.scene.debug.Arrow
 import com.jme3.scene.{Geometry, Node, Spatial}
 import com.jme3.scene.shape.{Box, Cylinder, Sphere}
 import com.jme3.util.TangentBinormalGenerator
-import demoGame.Vector3FHelper.V3Helper
+import demoGame.JmeImplicits3FHelper.V3Helper
 
 object MakerUtils {
 
@@ -47,12 +48,26 @@ object MakerUtils {
 
     mat
   }
-  def newWireframe(colorRGBA: ColorRGBA)(implicit  app:SimpleApplication): Material = {
+
+  def makeWireframe(colorRGBA: ColorRGBA)(implicit app:SimpleApplication): Material = {
     val material = new Material(app.getAssetManager, "Common/MatDefs/Misc/Unshaded.j3md")
     material.getAdditionalRenderState.setWireframe(true)
     material.setColor("Color", colorRGBA)
     material
   }
+
+  def makeTransparent(geom:Geometry) = {
+    geom.getMaterial.getAdditionalRenderState.setBlendMode(BlendMode.Alpha)
+    geom.setQueueBucket(Bucket.Transparent)
+  }
+
+  def makeUtility(geom:Geometry) = {
+    geom.getMaterial.getAdditionalRenderState.setBlendMode(BlendMode.Alpha)
+    geom.setQueueBucket(Bucket.Translucent)
+    geom.setShadowMode(ShadowMode.Off)
+  }
+
+
 
 
   def makeShadedTextured(diffusePath: String = "Textures/Terrain/Pond/Pond.jpg",
