@@ -13,6 +13,9 @@ class UiAppState(
                   gameLevelAppState: GameLevelAppState
                 ) extends BaseAppState with ScreenController {
   var nifty:Nifty = _
+
+  val hpPbName = "hpProgressBar"
+  val hpPbText = "hpProgressBarText"
   override def initialize(app: Application): Unit = {
     val guiNode = app.asInstanceOf[SimpleApplication].getGuiNode
 
@@ -37,6 +40,7 @@ class UiAppState(
 //          backgroundColor("#f0FF0000")
           backgroundColor(new Color(0, 0, 0, .2f))
           childLayoutVertical()
+
           text(new TextBuilder {
             color(new Color(1, .4f, .4f, 1f))
 //            backgroundColor("#00FF0000")
@@ -45,6 +49,8 @@ class UiAppState(
             text("GOLD:")
             width("*")
           })
+          control(UiElementOps.progressBar(hpPbName, hpPbText))
+
         })
       })
     }.build(nifty)
@@ -58,11 +64,16 @@ class UiAppState(
   }
 
   override def update(tpf: Float): Unit = {
-    val el = nifty.getScreen("game").findElementById("goldText")
-    if(el != null){
-      val gold = gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl]).info.gold
-      el.getRenderer(classOf[TextRenderer]).setText(s"GOLD $gold")
-    }
+
+    val player = gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl])
+    val gold = player.info.gold
+    UiElementOps.setText("goldText", "game", nifty, s"GOLD $gold")
+
+    val hpStr = s"${player.info.hp} / ${player.info.maxHp}"
+    val hpPercentage = player.info.hp.toFloat / player.info.maxMana.toFloat
+    UiElementOps.setProgress(hpPbName, "game", nifty, hpPercentage)
+    UiElementOps.setText(hpPbText, "game", nifty, hpStr)
+
   }
 
   override def cleanup(app: Application): Unit = {}

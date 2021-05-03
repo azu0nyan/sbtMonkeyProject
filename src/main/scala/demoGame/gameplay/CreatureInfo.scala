@@ -3,13 +3,16 @@ package demoGame.gameplay
 object CreatureInfo {
   class CreatureInfo(
                       var name: String,
-                      var hp: Int,
-                      var mana: Int,
+                      val maxHp: Int,
+                      var maxMana: Int,
                       var atk: Int,
                       var speed: Float,
                       var creatureType: CreatureType,
                       var gold: Int
                     ) {
+
+    var mana:Int = maxMana
+    var hp:Int = maxHp
 
   }
 
