@@ -13,9 +13,9 @@ import com.jme3.scene.shape.{Box, Cylinder, Sphere}
 import com.jme3.util.TangentBinormalGenerator
 import demoGame.JmeImplicits3FHelper.V3Helper
 
+import scala.collection.mutable
+
 object MakerUtils {
-
-
   def makeCharacterControl(g:Spatial)(implicit app  :SimpleApplication) = {
     val cc = new BetterCharacterControl(.5f, 1.5f, 10f)
     g.addControl(cc)
@@ -38,15 +38,19 @@ object MakerUtils {
     mat
   }
 
-  def makeShaded(color: ColorRGBA)(implicit  app:SimpleApplication): Material = {
-    val mat = new Material(app.getAssetManager, "Common/MatDefs/Light/Lighting.j3md")
-    mat.setBoolean("UseMaterialColors", true)
-    mat.setColor("Diffuse", color)
-    mat.setColor("Specular", ColorRGBA.White)
-    mat.setFloat("Shininess", 64f)
-    mat.setColor("Ambient", color.mult(0.2f).add(ColorRGBA.White.mult(0.1f)))
+  var shadedMats:mutable.Map[ColorRGBA, Material] = new mutable.HashMap()
 
-    mat
+  def makeShadedCached(color: ColorRGBA)(implicit app:SimpleApplication): Material = {
+    shadedMats.getOrElseUpdate(color, {
+      val mat = new Material(app.getAssetManager, "Common/MatDefs/Light/Lighting.j3md")
+      mat.setBoolean("UseMaterialColors", true)
+      mat.setColor("Diffuse", color)
+      mat.setColor("Specular", ColorRGBA.White)
+      mat.setFloat("Shininess", 64f)
+      mat.setColor("Ambient", color.mult(0.2f).add(ColorRGBA.White.mult(0.1f)))
+
+      mat
+    })
   }
 
   def makeWireframe(colorRGBA: ColorRGBA)(implicit app:SimpleApplication): Material = {
@@ -63,7 +67,8 @@ object MakerUtils {
 
   def makeUtility(geom:Geometry) = {
     geom.getMaterial.getAdditionalRenderState.setBlendMode(BlendMode.Alpha)
-    geom.setQueueBucket(Bucket.Translucent)
+//    geom.setQueueBucket(Bucket.Translucent)
+    geom.setQueueBucket(Bucket.Transparent)
     geom.setShadowMode(ShadowMode.Off)
   }
 
@@ -84,48 +89,52 @@ object MakerUtils {
     mat
   }
 
-  def makeBox(pos: Vector3f, size: Vector3f, name: String, mat: Material)(implicit  app:SimpleApplication): Geometry = {
+  def makeBox(pos: Vector3f, size: Vector3f, name: String, mat: Material, parent:Option[Node])(implicit  app:SimpleApplication): Geometry = {
     val b = new Box(size.x, size.y, size.z) // create cube shape
     val box = new Geometry(name, b) // create cube geometry from the shape
 
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(pos)
-    app.getRootNode.attachChild(box) // make the cube appear in the scene
+    parent.foreach(p => p.attachChild(box))
+//    app.getRootNode.attachChild(box) // make the cube appear in the scene
 
     TangentBinormalGenerator.generate(b)
     box.setShadowMode(ShadowMode.CastAndReceive)
     box
   }
 
-  def makeArrow(from: Vector3f, to: Vector3f, name: String, mat: Material)(implicit  app:SimpleApplication): Geometry = {
+  def makeArrow(from: Vector3f, to: Vector3f, name: String, mat: Material, parent:Option[Node])(implicit  app:SimpleApplication): Geometry = {
     val b = new Arrow(to - from) // create cube shape
     val box = new Geometry(name, b) // create cube geometry from the shape
 
+
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(from)
-    app.getRootNode.attachChild(box) // make the cube appear in the scene
+//    app.getRootNode.attachChild(box) // make the cube appear in the scene
+    parent.foreach(p => p.attachChild(box))
 
     box
   }
 
-  def makeCylinder(pos: Vector3f, radius:Float, height:Float, name: String, mat: Material)(implicit app:SimpleApplication): Geometry = {
+  def makeCylinder(pos: Vector3f, radius:Float, height:Float, name: String, mat: Material,parent:Option[Node])(implicit app:SimpleApplication): Geometry = {
     val b = new Cylinder(2, 16, radius, height, true) // create cube shape
     val box = new Geometry(name, b) // create cube geometry from the shape
-
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(pos)
-    app.getRootNode.attachChild(box) // make the cube appear in the scene
+//    app.getRootNode.attachChild(box) // make the cube appear in the scene
+    parent.foreach(p => p.attachChild(box))
     box.setShadowMode(ShadowMode.CastAndReceive)
     box
   }
 
-  def makeSphere(pos: Vector3f, radius:Float,  name: String, mat: Material)(implicit  app:SimpleApplication): Geometry = {
+  def makeSphere(pos: Vector3f, radius:Float,  name: String, mat: Material,parent:Option[Node])(implicit  app:SimpleApplication): Geometry = {
     val b = new Sphere(16, 16, radius) // create cube shape
     val box = new Geometry(name, b) // create cube geometry from the shape
 
     box.setMaterial(mat) // set the cube's material
     box.setLocalTranslation(pos)
-    app.getRootNode.attachChild(box) // make the cube appear in the scene
+//    app.getRootNode.attachChild(box) // make the cube appear in the scene
+    parent.foreach(p => p.attachChild(box))
     box.setShadowMode(ShadowMode.CastAndReceive)
     box
   }

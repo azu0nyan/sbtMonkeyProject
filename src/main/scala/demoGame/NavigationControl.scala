@@ -42,7 +42,8 @@ class NavigationControl(control: BetterCharacterControl,
         if (drawPath) {
           drawingPath.foreach(s => s.removeFromParent())
           drawingPath = if (p.size >= 2)
-            p.sliding(2).toSeq.map(x => MakerUtils.makeArrow(x(0), x(1), "pathArrow", MakerUtils.makeUnshaded(ColorRGBA.Yellow)))
+            p.sliding(2).toSeq.map(x => MakerUtils.makeArrow(x(0), x(1), "pathArrow",
+              MakerUtils.makeUnshaded(ColorRGBA.Yellow), Some(app.getRootNode)) )
           else Seq[Spatial]()
         }
       case None =>

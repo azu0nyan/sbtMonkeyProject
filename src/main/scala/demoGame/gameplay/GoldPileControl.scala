@@ -15,6 +15,8 @@ class GoldPileControl(sp: Spatial, amount: Int)(implicit level: GameLevelAppStat
   sp.addControl(ghost)
   level.bulletAppState.getPhysicsSpace.add(ghost)
 
+
+
   override def controlUpdate(tpf: Float): Unit = {
         ghost.getOverlappingObjects.asScala
           .filter(o  => o.getUserObject != null && o.getUserObject.isInstanceOf[Spatial])

@@ -9,10 +9,10 @@ class BotAiControl(control:NavigationControl, toFollow:Spatial) extends Abstract
 
 
   override def controlUpdate(tpf: Float): Unit = {
-    if(control.getMoveTo.distance(toFollow.getLocalTranslation) > maxDistance){
-
-      control.setMoveTo(toFollow.getLocalTranslation)
-    }
+//    if(control.getMoveTo.distance(toFollow.getLocalTranslation) > maxDistance){
+//
+//      control.setMoveTo(toFollow.getLocalTranslation)
+//    }
   }
   override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}
 }
