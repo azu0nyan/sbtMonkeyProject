@@ -25,7 +25,7 @@ object GraphicsUtils {
   def addShadows(light: DirectionalLight)(implicit app: SimpleApplication) = {
     import com.jme3.post.FilterPostProcessor
     import com.jme3.shadow.{DirectionalLightShadowFilter, DirectionalLightShadowRenderer}
-    val SHADOWMAP_SIZE = 1024
+    val SHADOWMAP_SIZE = 2048
     val dlsr = new DirectionalLightShadowRenderer(app.getAssetManager, SHADOWMAP_SIZE, 3)
     dlsr.setLight(light)
     app.getViewPort.addProcessor(dlsr)
@@ -44,7 +44,7 @@ object GraphicsUtils {
     import com.jme3.post.FilterPostProcessor
     import com.jme3.post.ssao.SSAOFilter
     val fpp = new FilterPostProcessor(app.getAssetManager)
-    val ssaoFilter = new SSAOFilter(12.94f, 43.92f, 0.33f, 0.61f)
+    val ssaoFilter = new SSAOFilter()
     fpp.addFilter(ssaoFilter)
     app.getViewPort.addProcessor(fpp)
   }

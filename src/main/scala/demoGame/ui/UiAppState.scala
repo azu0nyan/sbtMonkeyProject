@@ -42,7 +42,7 @@ class UiAppState(
           childLayoutVertical()
 
           text(new TextBuilder {
-            color(new Color(1, .4f, .4f, 1f))
+            color(new Color(1, .7f, .4f, 1f))
 //            backgroundColor("#00FF0000")
             font("Interface/Fonts/Default.fnt")
             id("goldText")

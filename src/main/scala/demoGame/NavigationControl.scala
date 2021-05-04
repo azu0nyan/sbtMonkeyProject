@@ -7,18 +7,18 @@ import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.Spatial
 import com.jme3.scene.control.AbstractControl
 import demoGame.JmeImplicits3FHelper._
+import demoGame.gameplay.{CreatureMovement, CreatureMovementControl}
 
 
-class NavigationControl(control: BetterCharacterControl,
+class NavigationControl(control: CreatureMovement,
                         nav: Navigation,
-                        var speed: Float,
                        )(implicit app: SimpleApplication) extends AbstractControl {
-  def currentPosition: Vector3f = control.getSpatial.getLocalTranslation
+  def currentPosition: Vector3f = getSpatial.getLocalTranslation
   var drawPath = false
   var drawingPath: Seq[Spatial] = Seq()
 
   var arrivalTolerance = .3f
-  private var _moveTo: Vector3f = currentPosition
+  private var _moveTo: Vector3f = new Vector3f()
 
 
   var pathExists = false
@@ -31,6 +31,22 @@ class NavigationControl(control: BetterCharacterControl,
   }
 
   def getMoveTo: Vector3f = _moveTo
+
+
+  def calculatePath(to:Vector3f): Option[Seq[Vector3f]] = nav.findPath(currentPosition, to)
+
+  def setPath(path:Seq[Vector3f]) :Unit =
+    if(path.nonEmpty){
+      currentPath = path
+      pathExists = true
+      pathCompleted = false
+      _moveTo = path.last
+    } else {
+      currentPath = Seq()
+      pathExists = true
+      pathCompleted = true
+    }
+
 
   def recalculatePath(): Unit = {
     val pathOpt = nav.findPath(currentPosition, _moveTo)
@@ -59,15 +75,15 @@ class NavigationControl(control: BetterCharacterControl,
         currentPath = currentPath.dropWhile(v => v.distance(currentPosition) < arrivalTolerance)
         if (currentPath.isEmpty) {
           pathCompleted = true
-          control.setViewDirection(new Vector3f(0, 0, 0))
+          control.setSightDirection(new Vector3f(0, 0, 0))
         } else {
           val target = currentPath.head
           val direction = target - currentPosition
-          control.setWalkDirection(direction.normalize() * speed)
-          control.setViewDirection(direction.normalize())
+          control.setMoveDirection(direction.normalize())
+          control.setSightDirection(direction.normalize())
         }
       } else {
-        control.setWalkDirection(new Vector3f(0, 0, 0))
+        control.setMoveDirection(new Vector3f(0, 0, 0))
       }
     }
   }

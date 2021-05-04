@@ -7,15 +7,15 @@ import com.jme3.input.controls.{ActionListener, KeyTrigger}
 import com.jme3.math.Vector3f
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
-
 import JmeImplicits3FHelper._
+import demoGame.gameplay.{CreatureMovement, CreatureMovementControl}
 
-class CharacterInputControl(character:BetterCharacterControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
+class CharacterInputControl(character:CreatureMovement)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
   var isLeft:Boolean = false
   var isRight:Boolean = false
   var isForward:Boolean = false
   var isBackward:Boolean = false
-  var speed:Float = 25f
+
 
   app.getInputManager.addMapping("chLeft", new KeyTrigger(KeyInput.KEY_A))
   app.getInputManager.addMapping("chRight", new KeyTrigger(KeyInput.KEY_D))
@@ -39,8 +39,8 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
     if(isForward) dir -= camDir
     if(isBackward) dir += camDir
 
-    character.setWalkDirection(dir.normalize.mult(speed))
-    character.setViewDirection(dir.normalize())
+    character.setMoveDirection(dir.normalize)
+    character.setSightDirection(dir.normalize())
   }
 
   override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}
@@ -51,7 +51,7 @@ class CharacterInputControl(character:BetterCharacterControl)(implicit app:Simpl
       case "chForward" => isForward = isPressed
       case "chBackward" => isBackward = isPressed
       case "chJump" if isPressed =>
-        character.jump()
+        character.jumpNow()
       case _ =>
     }
   }

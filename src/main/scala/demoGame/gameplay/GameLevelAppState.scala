@@ -8,10 +8,11 @@ import com.jme3.collision.CollisionResults
 import com.jme3.input.ChaseCamera
 import com.jme3.math._
 import com.jme3.scene.{Geometry, Node, Spatial}
-import demoGame.graphics.{ColorUtils, SetColorFromTime}
+import demoGame.graphics.{ColorUtils, ParticleUtils, SetColorFromTime}
 import demoGame.{CharacterInputControl, _}
 import demoGame.gameplay.CreatureInfo.{AngryBox, AwakenCylinder, CreatureInfo, CreatureType}
 import JmeImplicits3FHelper._
+import com.jme3.material.Material
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
 import jme3tools.optimize.GeometryBatchFactory
 
@@ -25,7 +26,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
 
   //  implicit val  app2:SimpleApplication = app
   var nav: Navigation = _
-  var playerCharacter: Spatial = _
+  var playerCharacter: Node = _
   var levelNode:Node = _
   var levelGeomNode:Node = _
 
@@ -53,6 +54,10 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
     chaseCam.setDefaultDistance(100)
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
 
+
+    val p = ParticleUtils.makeFireball()
+    p.emitAllParticles()
+    playerCharacter.attachChild(p)
 
     for (i <- 0 until 5) {
       spawnRandomEnemy()
@@ -91,7 +96,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
     tr.isEmpty | tr.asScala.forall(t => (1f - t.getHitFraction) * 1000f < .1f)
   }
 
-  def spawnPlayerCharacter(): Spatial = {
+  def spawnPlayerCharacter(): Node = {
     val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.2f), 10))
     nc.setEnabled(false)
     sp.addControl(new CharacterInputControl(cc))
@@ -103,10 +108,19 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
     spawnGold(findSpawnPosition(), (new Random().nextInt(5) + 1) * 100)
   }
 
+  lazy val goldMaterial:Material  = {
+    val goldColor = new ColorRGBA(1f, .8f, .0f, 1f)
+    val mat = MakerUtils.makeShaded(goldColor)
+    mat.setColor("GlowColor", goldColor)
+    mat.setColor("Specular", goldColor)
+    mat.setFloat("Shininess", 8f)
+    mat.setColor("Ambient", goldColor.mult(0.4f).add(ColorRGBA.White.mult(0.1f)))
+    mat
+  }
+
   def spawnGold(at: Vector3f, amount: Int) = {
     val size = math.pow(amount, 1 / 3f).toFloat * .1f
-    val gold = MakerUtils.makeBox(at, new Vector3f(size, size, size), "gold",
-      MakerUtils.makeShadedCached(new ColorRGBA(1f, 5f, .0f, 1f)), Some(levelNode))
+    val gold = MakerUtils.makeBox(at, new Vector3f(size, size, size), "gold", goldMaterial, Some(levelNode))
     new GoldPileControl(gold, amount)
   }
 
