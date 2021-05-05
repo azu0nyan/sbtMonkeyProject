@@ -6,7 +6,7 @@ import java.awt.Color
 
 object ColorUtils {
   def colorRGBAFromInt(color: Int): ColorRGBA = {
-    val c = new Color(color)
-    new ColorRGBA(c.getRed / 256f, c.getGreen / 256f, c.getBlue / 256f, c.getAlpha / 256f)
+    val c = new Color(color, true)
+    new ColorRGBA(c.getRed / 255f, c.getGreen / 255f, c.getBlue / 255f, c.getAlpha / 255f)
   }
 }

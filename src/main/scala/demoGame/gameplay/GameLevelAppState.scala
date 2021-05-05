@@ -20,7 +20,7 @@ import javax.imageio.ImageIO
 import scala.jdk.CollectionConverters._
 import scala.util.Random
 
-class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2f)(implicit val app: SimpleApplication) extends BaseAppState {
+class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4f, val blockHeight:Float = 5f)(implicit val app: SimpleApplication) extends BaseAppState {
   implicit val level: GameLevelAppState = this
   implicit var bulletAppState: BulletAppState = _
 
@@ -113,7 +113,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
     val mat = MakerUtils.makeShaded(goldColor)
     mat.setColor("GlowColor", goldColor)
     mat.setColor("Specular", goldColor)
-    mat.setFloat("Shininess", 8f)
+    mat.setFloat("Shininess", 64f)
     mat.setColor("Ambient", goldColor.mult(0.4f).add(ColorRGBA.White.mult(0.1f)))
     mat
   }
@@ -163,7 +163,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
       val pos = minAngle + new Vector3f(blockSize, 0, blockSize) * new Vector3f(i.toFloat, 0f, j.toFloat)
       if ((0xFF000000 & wallMap(i)(j)) != 0) {
         val c = ColorUtils.colorRGBAFromInt(wallMap(i)(j))
-        val b = MakerUtils.makeBox(pos, blockSize / 2f, "wall", MakerUtils.makeShadedCached(c),Some(levelGeomNode))
+        println((0xFF000000 & wallMap(i)(j)) >>> 24 )
+        //todo fix bottom of boxes
+        val b = MakerUtils.makeBox(pos, new Vector3f(blockSize /2f, blockSize * blockHeight * c.getAlpha, blockSize / 2f), "wall", MakerUtils.makeShadedCached(c),Some(levelGeomNode))
         MakerUtils.makeRigid(b, 0f)
         solid = solid :+ b
       }

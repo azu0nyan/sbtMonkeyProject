@@ -45,7 +45,7 @@ object MakerUtils {
     mat.setBoolean("UseMaterialColors", true)
     mat.setColor("Diffuse", color)
     mat.setColor("Specular", ColorRGBA.White)
-    mat.setFloat("Shininess", 128f)
+    mat.setFloat("Shininess", 1f)
     mat.setColor("Ambient", color.mult(0.2f).add(ColorRGBA.White.mult(0.2f)))
 
     mat
@@ -85,7 +85,7 @@ object MakerUtils {
     mat.setBoolean("UseMaterialColors", true)
     mat.setColor("Diffuse", ColorRGBA.White)
     mat.setColor("Specular", ColorRGBA.White)
-    mat.setFloat("Shininess", 64f) // [0,128]
+    mat.setFloat("Shininess", 1f) // [0,128]
     mat.setColor("Ambient", ColorRGBA.White.mult(0.2f))
     mat
   }

@@ -16,8 +16,9 @@ object GraphicsUtils {
 
   def addSun()(implicit app: SimpleApplication): DirectionalLight = {
     val sun: DirectionalLight = new DirectionalLight
-    sun.setDirection(new Vector3f(1, -1, -(2)).normalizeLocal)
-    sun.setColor(ColorRGBA.White)
+    sun.setDirection(new Vector3f(1, -5, -(2)).normalizeLocal)
+    sun.setColor(ColorRGBA.White.mult(.8f))
+
     app.getRootNode.addLight(sun)
     sun
 
