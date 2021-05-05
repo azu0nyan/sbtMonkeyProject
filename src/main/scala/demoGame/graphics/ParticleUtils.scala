@@ -19,7 +19,7 @@ object ParticleUtils {
       fire.setEndColor(  new ColorRGBA(1f, 0f, 0f, 1f));   // red
       fire.setStartColor(new ColorRGBA(1f, 1f, 0f, 0.5f)); // yellow
       fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0,2,0));
-      fire.setStartSize(1.5f);
+      fire.setStartSize(.5f);
       fire.setEndSize(0.1f);
       fire.setGravity(0,0,0);
       fire.setLowLife(0.5f);

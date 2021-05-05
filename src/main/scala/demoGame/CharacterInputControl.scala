@@ -8,9 +8,10 @@ import com.jme3.math.Vector3f
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
 import JmeImplicits3FHelper._
-import demoGame.gameplay.{CreatureMovement, CreatureMovementControl}
+import demoGame.gameplay.actions.Fireball.Fireball
+import demoGame.gameplay.{CreatureControl, CreatureMovement, CreatureMovementControl}
 
-class CharacterInputControl(character:CreatureMovement)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
+class CharacterInputControl(character:CreatureMovement, creatureControl:CreatureControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
   var isLeft:Boolean = false
   var isRight:Boolean = false
   var isForward:Boolean = false
@@ -22,12 +23,19 @@ class CharacterInputControl(character:CreatureMovement)(implicit app:SimpleAppli
   app.getInputManager.addMapping("chForward", new KeyTrigger(KeyInput.KEY_W))
   app.getInputManager.addMapping("chBackward", new KeyTrigger(KeyInput.KEY_S))
   app.getInputManager.addMapping("chJump", new KeyTrigger(KeyInput.KEY_SPACE))
+  app.getInputManager.addMapping("chCast", new KeyTrigger(KeyInput.KEY_E))
 
-  app.getInputManager.addListener(this, "chLeft", "chRight", "chForward", "chBackward", "chJump")
-  override def controlUpdate(tpf: Float): Unit = {
+  app.getInputManager.addListener(this, "chCast","chLeft", "chRight", "chForward", "chBackward", "chJump")
+
+  def cameraDirFlattened:Vector3f = {
     val camDir = app.getCamera.getDirection.clone()
+    camDir.y = 0;
+    camDir
+  }
+
+  override def controlUpdate(tpf: Float): Unit = {
+    val camDir = cameraDirFlattened
     val camLeft = app.getCamera.getLeft.clone()
-    camDir.y = 0
     camLeft.y = 0
     camDir.negateLocal()
     camDir.normalizeLocal()
@@ -50,6 +58,8 @@ class CharacterInputControl(character:CreatureMovement)(implicit app:SimpleAppli
       case "chRight" => isRight = isPressed
       case "chForward" => isForward = isPressed
       case "chBackward" => isBackward = isPressed
+      case "chCast" if isPressed =>
+        creatureControl.doAction(new Fireball(cameraDirFlattened, creatureControl))
       case "chJump" if isPressed =>
         character.jumpNow()
       case _ =>

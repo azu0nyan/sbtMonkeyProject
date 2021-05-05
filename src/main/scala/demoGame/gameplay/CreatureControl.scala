@@ -8,7 +8,10 @@ import demoGame.gameplay.CreatureInfo.CreatureInfo
 import demoGame.gameplay.CreatureState.{ChannelingAction, CreatureAction, CreatureState, Normal, Stunned}
 
 
-class CreatureControl(initialInfo: CreatureInfo) extends AbstractControl {
+
+trait Creature
+
+class CreatureControl(initialInfo: CreatureInfo)(implicit val level:GameLevelAppState) extends AbstractControl {
   implicit val cr: CreatureControl = this
 
   val info: CreatureInfo = initialInfo
@@ -16,8 +19,11 @@ class CreatureControl(initialInfo: CreatureInfo) extends AbstractControl {
   lazy val movement: CreatureMovement = getSpatial.getControl(classOf[CreatureMovementControl])
   lazy val nav: NavigationControl = getSpatial.getControl(classOf[NavigationControl])
 
+
   def state:CreatureState = _state
   private var _state: CreatureState = Normal()
+
+
 
   def setState(newState: CreatureState): Unit = {
     _state match {
@@ -53,16 +59,21 @@ class CreatureControl(initialInfo: CreatureInfo) extends AbstractControl {
   override def controlUpdate(tpf: Float): Unit = {
     _state match {
       case Normal() =>
-      case Stunned(timeLeft) if timeLeft - tpf <= 0 => _state = Normal()
-      case Stunned(timeLeft) => _state = Stunned(timeLeft - tpf)
-      case ChannelingAction(timeLeft, action) if timeLeft - tpf < 0 =>
+      case Stunned(timeLeft) if timeLeft - tpf <= 0 =>
+        _state = Normal()
+        movement.allowMovement()
+      case Stunned(timeLeft) =>
+        _state = Stunned(timeLeft - tpf)
+      case ChannelingAction(timeLeft, action) if timeLeft - tpf > 0 =>
         action.onActionContinues(tpf)
         _state = ChannelingAction(timeLeft - tpf, action)
       case ChannelingAction(timeLeft, action) =>
         action.onActionContinues(timeLeft)
         val actionOnEnd = action.onActionEnds(this)
-        if (actionOnEnd.isEmpty) _state = Normal()
-        else doAction(actionOnEnd.get)
+        if (actionOnEnd.isEmpty) {
+          _state = Normal()
+          movement.allowMovement()
+        }  else doAction(actionOnEnd.get)
 
     }
   }

@@ -1,7 +1,12 @@
 package demoGame
 
+import com.jme3.bullet.control.GhostControl
 import com.jme3.math
 import com.jme3.math.{ColorRGBA, Vector3f}
+import com.jme3.scene.Spatial
+import demoGame.gameplay.CreatureControl
+
+import scala.jdk.CollectionConverters.ListHasAsScala
 
 object JmeImplicits3FHelper {
 
@@ -33,6 +38,15 @@ object JmeImplicits3FHelper {
       c
     }
   }
+
+
+  def overlappingSpatials(ghost: GhostControl): Seq[Spatial] = ghost.getOverlappingObjects.asScala
+    .filter(o => o.getUserObject != null && o.getUserObject.isInstanceOf[Spatial])
+    .map(o => o.getUserObject.asInstanceOf[Spatial]).toSeq
+
+  def overlappingCreatures(ghost: GhostControl): Seq[CreatureControl] =
+    overlappingSpatials(ghost)
+      .flatMap(sp => Option(sp.getControl(classOf[CreatureControl])))
 
 
 }

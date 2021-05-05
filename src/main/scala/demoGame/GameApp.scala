@@ -10,16 +10,20 @@ import com.jme3.collision.CollisionResults
 import com.jme3.input.{ChaseCamera, KeyInput}
 import com.jme3.input.controls.KeyTrigger
 import com.jme3.scene.{Geometry, Mesh, Node, Spatial}
+import demoGame.GameApp.getClass
 import demoGame.gameplay.GameLevelAppState
 import demoGame.graphics.{GraphicsUtils, SetColorFromTime}
 import demoGame.ui.UiAppState
 
 import java.io.File
+import java.util.logging.{Filter, Level, LogRecord, Logger}
 import javax.imageio.ImageIO
+import scala.reflect.internal.util.FileUtils
 import scala.util.Random
 
 object GameApp {
   def main(args: Array[String]): Unit = {
+
     val app = new GameApp()
     val setting = new AppSettings(true)
     setting.setWidth(1280)
@@ -35,6 +39,7 @@ class GameApp extends SimpleApplication {
 
 
   override def simpleInitApp(): Unit = {
+
     //    flyCam.setMoveSpeed(100)
     flyCam.setEnabled(false)
 
@@ -49,15 +54,14 @@ class GameApp extends SimpleApplication {
     val lvl = new GameLevelAppState()
     stateManager.attach(lvl)
     stateManager.attach(new UiAppState(lvl))
-
-
   }
 
-
-
-
+  //todo log in xml
+  var off = false
   override def simpleUpdate(tpf: Float): Unit = {
-
+    if (!off) {
+      Logger.getLogger(classOf[BetterCharacterControl].getName).setLevel(Level.OFF)
+    }
   }
 
 

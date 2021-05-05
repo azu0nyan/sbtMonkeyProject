@@ -55,9 +55,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
 
 
-    val p = ParticleUtils.makeFireball()
-    p.emitAllParticles()
-    playerCharacter.attachChild(p)
+//    val p = ParticleUtils.makeFireball()
+//    p.emitAllParticles()
+//    playerCharacter.attachChild(p)
 
     for (i <- 0 until 5) {
       spawnRandomEnemy()
@@ -99,7 +99,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 2
   def spawnPlayerCharacter(): Node = {
     val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.2f), 10))
     nc.setEnabled(false)
-    sp.addControl(new CharacterInputControl(cc))
+    sp.addControl(new CharacterInputControl(cc, sp.getControl(classOf[CreatureControl])))
     sp
   }
 
