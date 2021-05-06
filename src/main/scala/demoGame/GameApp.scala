@@ -12,7 +12,7 @@ import com.jme3.input.controls.KeyTrigger
 import com.jme3.scene.{Geometry, Mesh, Node, Spatial}
 import demoGame.GameApp.getClass
 import demoGame.gameplay.GameLevelAppState
-import demoGame.graphics.{GraphicsUtils, SetColorFromTime}
+import demoGame.graphics.GraphicsUtils
 import demoGame.ui.UiAppState
 
 import java.io.File

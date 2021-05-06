@@ -8,7 +8,7 @@ import com.jme3.collision.CollisionResults
 import com.jme3.input.ChaseCamera
 import com.jme3.math._
 import com.jme3.scene.{Geometry, Node, Spatial}
-import demoGame.graphics.{ColorUtils, ParticleUtils, SetColorFromTime}
+import demoGame.graphics.{ColorUtils, SetColorFromTime}
 import demoGame.{CharacterInputControl, _}
 import demoGame.gameplay.CreatureInfo.{AngryBox, AwakenCylinder, CreatureInfo, CreatureType}
 import JmeImplicits3FHelper._
@@ -42,10 +42,11 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     app.getRootNode.attachChild(levelNode)
     //    bulletAppState.setDebugEnabled(true)
 
+    nav = new Navigation(false)
 
     val levelSolidObjects = initMap()
     //nav mesh
-    nav = new Navigation(levelSolidObjects, false)
+    nav.setObjects(levelSolidObjects)
 
     playerCharacter = spawnPlayerCharacter()
     val chaseCam = new ChaseCamera(app.getCamera, playerCharacter, app.getInputManager)
@@ -72,7 +73,8 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
   def spawnEnemy(pos: Vector3f, creatureType: CreatureType) = {
     val (sp, cc, nc) = CreatureOps.makeCreature(pos, CreatureInfo.infoFromType(creatureType))
-    val botAi = new BotAiControl(nc, playerCharacter)
+
+    val botAi = new BotAiControl(nc, sp.getControl(classOf[CreatureControl]), pos)
     sp.addControl(botAi)
     botAi
   }

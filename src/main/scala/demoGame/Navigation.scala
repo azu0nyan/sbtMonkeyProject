@@ -10,23 +10,27 @@ import scala.concurrent.{Future, Promise}
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.util.Success
 
-class Navigation(seq: Seq[Geometry], showDebug: Boolean = true)(implicit app: SimpleApplication) {
+class Navigation( showDebug: Boolean = true)(implicit app: SimpleApplication) {
+
+
+
 
   var navMesh:Option[NavMesh] = None
 
-  Future {
-    val meshData = NavMeshGeneration.generate(seq)
-    val navMeshMesh = NavMeshGeneration.meshDataToGeometry(meshData)
-    val navMeshGeom = new Geometry("navMesh", navMeshMesh)
-    if (showDebug) {
-      navMeshGeom.setMaterial(MakerUtils.makeWireframe(ColorRGBA.Cyan))
-      app.getRootNode.attachChild(navMeshGeom)
+  def setObjects  (seq: Seq[Geometry]) =
+    Future {
+      val meshData = NavMeshGeneration.generate(seq)
+      val navMeshMesh = NavMeshGeneration.meshDataToGeometry(meshData)
+      val navMeshGeom = new Geometry("navMesh", navMeshMesh)
+      if (showDebug) {
+        navMeshGeom.setMaterial(MakerUtils.makeWireframe(ColorRGBA.Cyan))
+        app.getRootNode.attachChild(navMeshGeom)
+      }
+      new NavMesh(meshData, NavMeshGeneration.m_vertsPerPoly, 1)
+    }.onComplete {
+      case Success(nm) => navMesh = Some(nm)
+      case _ =>
     }
-    new NavMesh(meshData, NavMeshGeneration.m_vertsPerPoly, 1)
-  }.onComplete{
-    case Success(nm) => navMesh = Some(nm)
-    case _ =>
-  }
 
 
 

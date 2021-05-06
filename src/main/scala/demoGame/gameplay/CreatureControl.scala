@@ -8,10 +8,21 @@ import demoGame.gameplay.CreatureInfo.CreatureInfo
 import demoGame.gameplay.CreatureState.{ChannelingAction, CreatureAction, CreatureState, Normal, Stunned}
 
 
-
 trait Creature
 
-class CreatureControl(initialInfo: CreatureInfo)(implicit val level:GameLevelAppState) extends AbstractControl {
+class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAppState) extends AbstractControl {
+
+
+  def death(): Unit = {
+    getSpatial.removeFromParent()
+  }
+
+  def receiveDamage(dmg: Int): Unit = {
+    val dmgReceived = math.min(info.hp,math.max(dmg, 0))
+    info.hp -= dmgReceived
+    if(info.hp <= 0) death()
+  }
+
   implicit val cr: CreatureControl = this
 
   val info: CreatureInfo = initialInfo
@@ -20,9 +31,8 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level:GameLevelApp
   lazy val nav: NavigationControl = getSpatial.getControl(classOf[NavigationControl])
 
 
-  def state:CreatureState = _state
+  def state: CreatureState = _state
   private var _state: CreatureState = Normal()
-
 
 
   def setState(newState: CreatureState): Unit = {
@@ -45,7 +55,7 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level:GameLevelApp
     this
   }
 
-  def stun(time:Float):Unit = {
+  def stun(time: Float): Unit = {
     setState(Stunned(time))
   }
 
@@ -73,7 +83,7 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level:GameLevelApp
         if (actionOnEnd.isEmpty) {
           _state = Normal()
           movement.allowMovement()
-        }  else doAction(actionOnEnd.get)
+        } else doAction(actionOnEnd.get)
 
     }
   }
