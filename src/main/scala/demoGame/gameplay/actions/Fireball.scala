@@ -16,6 +16,7 @@ import java.util.logging.Logger
 
 object Fireball {
   val logger = Logger.getLogger("fireball")
+
   class Fireball(val dir: Vector3f, caster: CreatureControl) extends CreatureAction {
     var p: ParticleEmitter = _
     var time: Float = 0

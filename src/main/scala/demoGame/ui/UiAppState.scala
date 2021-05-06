@@ -9,6 +9,8 @@ import de.lessvoid.nifty.screen.{Screen, ScreenController}
 import de.lessvoid.nifty.tools.Color
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 
+import java.awt.event.{KeyEvent, KeyListener}
+
 class UiAppState(
                   gameLevelAppState: GameLevelAppState
                 ) extends BaseAppState with ScreenController {
@@ -17,7 +19,6 @@ class UiAppState(
   val hpPbName = "hpProgressBar"
   val hpPbText = "hpProgressBarText"
   override def initialize(app: Application): Unit = {
-    val guiNode = app.asInstanceOf[SimpleApplication].getGuiNode
 
     import com.jme3.niftygui.NiftyJmeDisplay
     import de.lessvoid.nifty.Nifty
@@ -25,6 +26,7 @@ class UiAppState(
     /** Create a new NiftyGUI object */
      nifty = niftyDisplay.getNifty
     import de.lessvoid.nifty.builder.ScreenBuilder
+
 
 
     val screen = new ScreenBuilder("game", UiAppState.this) {

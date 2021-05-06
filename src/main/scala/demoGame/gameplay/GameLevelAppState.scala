@@ -33,6 +33,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   override def initialize(application: Application): Unit = {
 
     bulletAppState = new BulletAppState()
+//    bulletAppState.setDebugEnabled(true)
     app.getStateManager.attach(bulletAppState)
     levelNode = new Node("level")
     levelGeomNode = new Node("levelGeom")

@@ -70,7 +70,7 @@ object MakerUtils {
 
   def makeUtility(geom: Geometry) = {
     geom.getMaterial.getAdditionalRenderState.setBlendMode(BlendMode.Alpha)
-    //    geom.setQueueBucket(Bucket.Translucent)
+//        geom.setQueueBucket(Bucket.Translucent)
     geom.setQueueBucket(Bucket.Transparent)
     geom.setShadowMode(ShadowMode.Off)
   }
