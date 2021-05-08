@@ -3,11 +3,12 @@ package demoGame.gameplay
 import com.jme3.app.SimpleApplication
 import com.jme3.bullet.{PhysicsSpace, PhysicsTickListener}
 import com.jme3.bullet.control.BetterCharacterControl
-import com.jme3.math.Vector3f
+import com.jme3.bullet.objects.PhysicsRigidBody
+import com.jme3.math.{FastMath, MathUtils, Quaternion, Vector2f, Vector3f}
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
 import demoGame.JmeImplicits3FHelper._
-import demoGame.{CharacterInputControl, NavigationControl}
+import demoGame.{CharacterInputControl, MyMathUtils, NavigationControl}
 
 trait CreatureMovement{
   def setSightDirection(vector3f: Vector3f): Unit
@@ -28,6 +29,9 @@ class CreatureMovementControl(radius: Float,
                               private var _maxSpeed: Float,
                               private var movementEnabled: Boolean = true,
                              ) extends BetterCharacterControl(radius, height, mass)  with CreatureMovement {
+  val rotationAngleTolerance = .01f
+  var turnRate = FastMath.PI
+  private var targetSightDirection:Vector3f = getViewDirection
 
   def maxSpeed: Float = _maxSpeed
 
@@ -44,6 +48,22 @@ class CreatureMovementControl(radius: Float,
     movementEnabled = true
   }
 
+  override def prePhysicsTick(space: PhysicsSpace, tpf: Float): Unit = super.prePhysicsTick(space, tpf)
+
+  override def update(tpf: Float): Unit = {
+    val target = targetSightDirection.planeProjection
+    val current = getViewDirection.planeProjection
+    val toRotateAngle = MyMathUtils.directedSmallestAngle(target, current)//target.angleBetween(current)
+    if(math.abs(toRotateAngle) > rotationAngleTolerance){
+      val sign = math.signum(toRotateAngle)
+      val a = sign * math.min(toRotateAngle * sign, turnRate * tpf)
+      val q = new Quaternion().fromAngleAxis(a, Vector3f.UNIT_Y)
+      val dir = q.mult(getViewDirection)
+      setViewDirection(dir)
+    }
+    super.update(tpf)
+  }
+
   override def jumpNow(): Unit = if(movementEnabled) jump()
 
   override def setMoveDirection(dirWithCel: Vector3f): Unit = {
@@ -53,8 +73,12 @@ class CreatureMovementControl(radius: Float,
     }
   }
   override def setSightDirection(vector3f: Vector3f): Unit = {
-    setViewDirection(vector3f)
+    targetSightDirection = vector3f.clone()
+    targetSightDirection.normalizeLocal()
+//    setViewDirection(vector3f)
   }
+
+  def controlledRigidBody:PhysicsRigidBody = rigidBody
 }
 
 

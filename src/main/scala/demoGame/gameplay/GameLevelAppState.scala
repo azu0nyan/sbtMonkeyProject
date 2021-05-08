@@ -33,7 +33,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   override def initialize(application: Application): Unit = {
 
     bulletAppState = new BulletAppState()
-    //    bulletAppState.setDebugEnabled(true)
+//        bulletAppState.setDebugEnabled(true)
     app.getStateManager.attach(bulletAppState)
     levelNode = new Node("level")
     levelGeomNode = new Node("levelGeom")
@@ -100,7 +100,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   }
 
   def spawnPlayerCharacter(): Node = {
-    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.2f), 10))
+    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.5f), 10))
     nc.setEnabled(false)
     sp.getControl(classOf[CreatureControl]).setSpeed(50f)
     sp.addControl(new CharacterInputControl(cc, sp.getControl(classOf[CreatureControl])))

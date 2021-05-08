@@ -20,7 +20,7 @@ class BotAiControl(control:NavigationControl, creatureControl: CreatureControl, 
     if(dist < followDistance){
       goToLocation(playerPos)
     } else {
-      goToLocation(initialPos)
+      goToLocation(initialPos, false)
     }
   }
 

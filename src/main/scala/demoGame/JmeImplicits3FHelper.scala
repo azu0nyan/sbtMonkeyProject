@@ -1,8 +1,9 @@
 package demoGame
 
+import com.jme3.bounding.{BoundingBox, BoundingSphere, BoundingVolume}
 import com.jme3.bullet.control.GhostControl
 import com.jme3.math
-import com.jme3.math.{ColorRGBA, Vector3f}
+import com.jme3.math.{ColorRGBA, Vector2f, Vector3f}
 import com.jme3.scene.Spatial
 import demoGame.gameplay.CreatureControl
 
@@ -25,6 +26,8 @@ object JmeImplicits3FHelper {
     def *=(ot: Vector3f): Vector3f = v.multLocal(ot)
     def /=(ot: Vector3f): Vector3f = v.divideLocal(ot)
     def ^=(ot: Vector3f): Vector3f = v.crossLocal(ot)
+
+    def planeProjection:Vector2f = new Vector2f(v.x, v.z)
   }
 
   implicit class ColorHelper(val c: ColorRGBA) extends AnyVal {
@@ -49,4 +52,12 @@ object JmeImplicits3FHelper {
       .flatMap(sp => Option(sp.getControl(classOf[CreatureControl])))
 
 
-}
+  def boundingRadius(b:BoundingVolume) :Float = b match {
+    case box: BoundingBox => scala.math.max(scala.math.max(box.getXExtent, box.getYExtent), box.getZExtent)
+    case sphere: BoundingSphere =>sphere.getRadius
+    case _ =>1f
+  }
+
+
+
+  }

@@ -48,7 +48,7 @@ class CharacterInputControl(character:CreatureMovement, creatureControl:Creature
     if(isBackward) dir += camDir
 
     character.setMoveDirection(dir.normalize)
-    character.setSightDirection(dir.normalize())
+    character.setSightDirection(camDir.negate())
   }
 
   override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}

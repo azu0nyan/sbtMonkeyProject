@@ -1,14 +1,14 @@
 package demoGame.gameplay.actions
 
 import com.jme3.bullet.collision.shapes.SphereCollisionShape
-import com.jme3.bullet.control.GhostControl
+import com.jme3.bullet.control.{BetterCharacterControl, GhostControl}
 import com.jme3.effect.ParticleEmitter
 import com.jme3.math.Vector3f
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.{Node, Spatial}
 import com.jme3.scene.control.AbstractControl
 import demoGame.JmeImplicits3FHelper._
-import demoGame.gameplay.{CreatureControl, CreatureState, GameLevelAppState}
+import demoGame.gameplay.{CreatureControl, CreatureMovementControl, CreatureState, GameLevelAppState}
 import demoGame.gameplay.CreatureState.{ChannelingAction, CreatureAction, CreatureState, Normal}
 import demoGame.graphics.particles.ParticleUtils
 
@@ -33,7 +33,9 @@ object Fireball {
       p = ParticleUtils.makeFireball()(creature.level.app)
       n.attachChild(p)
       creature.level.levelNode.attachChild(n)
-      n.setLocalTranslation(creature.getSpatial.getLocalTranslation + dir.normalize() * 1.5f)
+      //анимация каста начинается перед персонажем, вычисляем смещение
+      val forwardOffset = dir.normalize() * (boundingRadius(creature.getSpatial.getWorldBound) + .2f)
+      n.setLocalTranslation(creature.getSpatial.getLocalTranslation + forwardOffset)
       Some(ChannelingAction(.5f, this))
     }
 
@@ -72,27 +74,24 @@ object Fireball {
     var bang:ParticleEmitter = _
     override def controlUpdate(tpf: Float): Unit = state match {
       case `flyState` =>
+        //если мы попали в кого-то
         overlappingCreatures(ghost).find(p => p != caster).foreach { cc =>
           logger.info(s"fireball hit creature ${cc.name}")
           cc.receiveDamage(50)
-//          spellNode.removeFromParent()
+          cc.stun(.25f)
+//          val body = cc.movement.asInstanceOf[CreatureMovementControl].controlledRigidBody
+//          body.applyImpulse(new Vector3f(1f, 0f, 1f).mult(body.getMass * 50f), Vector3f.ZERO)
           state = bangState
-          bang = ParticleUtils.makeFireExplosion()(caster.level.app)
-          fireball.removeFromParent()
-          spellNode.attachChild(bang)
-          bang.emitAllParticles()
+          makeBang()
         }
+        //Если не в кого не попали, то возможно врезались в стену
         if(state == flyState){
           overlappingSpatials(ghost).find(sp => sp.getName == "wall").foreach { sp =>
             logger.info(s"fireball hit wall")
-            state = bangState
-            bang = ParticleUtils.makeFireExplosion()(caster.level.app)
-            fireball.removeFromParent()
-            spellNode.attachChild(bang)
-            bang.emitAllParticles()
+           makeBang()
           }
         }
-        //still flying
+        //Если не попали и не врезались, продолжаем лететь
         if(state == flyState) {
           curSpeed += math.min(maxSpeed, acceleration * tpf)
           spellNode.setLocalTranslation(spellNode.getLocalTranslation + dir.normalize() * tpf * curSpeed)
@@ -106,6 +105,14 @@ object Fireball {
       //
     }
 
+    private def makeBang():Unit = {
+      state = bangState
+
+      bang = ParticleUtils.makeFireExplosion()(caster.level.app)
+      fireball.removeFromParent()
+      spellNode.attachChild(bang)
+      bang.emitAllParticles()
+    }
 
     def clear():Unit = {
       spatial.removeFromParent()
