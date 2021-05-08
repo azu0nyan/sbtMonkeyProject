@@ -9,9 +9,10 @@ import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
 import JmeImplicits3FHelper._
 import demoGame.gameplay.actions.Fireball.Fireball
+import demoGame.gameplay.actions.GeometricExplosion.GeometricExplosion
 import demoGame.gameplay.{CreatureControl, CreatureMovement, CreatureMovementControl}
 
-class CharacterInputControl(character:CreatureMovement, creatureControl:CreatureControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
+class CharacterInputControl(creatureMovement:CreatureMovement, creatureControl:CreatureControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
   var isLeft:Boolean = false
   var isRight:Boolean = false
   var isForward:Boolean = false
@@ -23,9 +24,10 @@ class CharacterInputControl(character:CreatureMovement, creatureControl:Creature
   app.getInputManager.addMapping("chForward", new KeyTrigger(KeyInput.KEY_W))
   app.getInputManager.addMapping("chBackward", new KeyTrigger(KeyInput.KEY_S))
   app.getInputManager.addMapping("chJump", new KeyTrigger(KeyInput.KEY_SPACE))
-  app.getInputManager.addMapping("chCast", new KeyTrigger(KeyInput.KEY_E))
+  app.getInputManager.addMapping("chCast1", new KeyTrigger(KeyInput.KEY_E))
+  app.getInputManager.addMapping("chCast2", new KeyTrigger(KeyInput.KEY_Q))
 
-  app.getInputManager.addListener(this, "chCast","chLeft", "chRight", "chForward", "chBackward", "chJump")
+  app.getInputManager.addListener(this, "chCast1","chCast2", "chLeft", "chRight", "chForward", "chBackward", "chJump")
 
   def cameraDirFlattened:Vector3f = {
     val camDir = app.getCamera.getDirection.clone()
@@ -47,8 +49,8 @@ class CharacterInputControl(character:CreatureMovement, creatureControl:Creature
     if(isForward) dir -= camDir
     if(isBackward) dir += camDir
 
-    character.setMoveDirection(dir.normalize)
-    character.setSightDirection(camDir.negate())
+    creatureMovement.setMoveDirection(dir.normalize)
+    creatureMovement.setSightDirection(camDir.negate())
   }
 
   override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}
@@ -58,10 +60,12 @@ class CharacterInputControl(character:CreatureMovement, creatureControl:Creature
       case "chRight" => isRight = isPressed
       case "chForward" => isForward = isPressed
       case "chBackward" => isBackward = isPressed
-      case "chCast" if isPressed =>
+      case "chCast1" if isPressed =>
+        creatureControl.doAction(new GeometricExplosion(cameraDirFlattened, creatureControl))
+      case "chCast2" if isPressed =>
         creatureControl.doAction(new Fireball(cameraDirFlattened, creatureControl))
       case "chJump" if isPressed =>
-        character.jumpNow()
+        creatureMovement.jumpNow()
       case _ =>
     }
   }

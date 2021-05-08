@@ -18,6 +18,8 @@ trait CreatureMovement{
   def allowMovement():Unit
   def jumpNow():Unit
   def setMoveDirection(dirWithCel:Vector3f):Unit
+
+  def controlledRigidBody:PhysicsRigidBody
 }
 
 /**
@@ -42,13 +44,19 @@ class CreatureMovementControl(radius: Float,
   def forbidMovement(): Unit = {
     movementEnabled = false
     setWalkDirection(Vector3f.ZERO)
+    controlledRigidBody.setLinearVelocity(Vector3f.ZERO)
   }
 
   def allowMovement(): Unit = {
     movementEnabled = true
+    setWalkDirection(Vector3f.ZERO)
   }
 
-  override def prePhysicsTick(space: PhysicsSpace, tpf: Float): Unit = super.prePhysicsTick(space, tpf)
+  override def prePhysicsTick(space: PhysicsSpace, tpf: Float): Unit = {
+    if(movementEnabled) {
+      super.prePhysicsTick(space, tpf)
+    }
+  }
 
   override def update(tpf: Float): Unit = {
     val target = targetSightDirection.planeProjection
@@ -78,7 +86,7 @@ class CreatureMovementControl(radius: Float,
 //    setViewDirection(vector3f)
   }
 
-  def controlledRigidBody:PhysicsRigidBody = rigidBody
+ override def controlledRigidBody:PhysicsRigidBody = rigidBody
 }
 
 

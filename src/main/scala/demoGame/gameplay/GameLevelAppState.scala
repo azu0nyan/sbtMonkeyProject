@@ -51,7 +51,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     playerCharacter = spawnPlayerCharacter()
     val chaseCam = new ChaseCamera(app.getCamera, playerCharacter, app.getInputManager)
     chaseCam.setInvertVerticalAxis(true)
-    chaseCam.setDragToRotate(true)
+    chaseCam.setDragToRotate(false)
     chaseCam.setMaxDistance(150)
     chaseCam.setDefaultDistance(100)
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))

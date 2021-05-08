@@ -11,11 +11,12 @@ import demoGame.JmeImplicits3FHelper._
 import demoGame.gameplay.{CreatureControl, CreatureMovementControl, CreatureState, GameLevelAppState}
 import demoGame.gameplay.CreatureState.{ChannelingAction, CreatureAction, CreatureState, Normal}
 import demoGame.graphics.particles.ParticleUtils
+import org.slf4j.LoggerFactory
 
 import java.util.logging.Logger
 
 object Fireball {
-  val logger = Logger.getLogger("fireball")
+  val logger = LoggerFactory.getLogger(classOf[Fireball].getName)
 
   class Fireball(val dir: Vector3f, caster: CreatureControl) extends CreatureAction {
     var n: Node = _
@@ -79,8 +80,8 @@ object Fireball {
           logger.info(s"fireball hit creature ${cc.name}")
           cc.receiveDamage(50)
           cc.stun(.25f)
-//          val body = cc.movement.asInstanceOf[CreatureMovementControl].controlledRigidBody
-//          body.applyImpulse(new Vector3f(1f, 0f, 1f).mult(body.getMass * 50f), Vector3f.ZERO)
+          val body = cc.movement.asInstanceOf[CreatureMovementControl].controlledRigidBody
+          body.applyImpulse(dir.mult(body.getMass * 50f), Vector3f.ZERO)
           state = bangState
           makeBang()
         }
