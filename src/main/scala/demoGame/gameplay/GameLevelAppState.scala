@@ -2,7 +2,7 @@ package demoGame.gameplay
 
 import com.jme3.app.state.{AbstractAppState, AppStateManager, BaseAppState}
 import com.jme3.app.{Application, SimpleApplication}
-import com.jme3.bullet.BulletAppState
+import com.jme3.bullet.{BulletAppState, PhysicsSpace}
 import com.jme3.bullet.control.BetterCharacterControl
 import com.jme3.collision.CollisionResults
 import com.jme3.input.ChaseCamera
@@ -20,20 +20,20 @@ import javax.imageio.ImageIO
 import scala.jdk.CollectionConverters._
 import scala.util.Random
 
-class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4f, val blockHeight:Float = 5f)(implicit val app: SimpleApplication) extends BaseAppState {
+class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4f, val blockHeight: Float = 5f)(implicit val app: SimpleApplication) extends BaseAppState {
   implicit val level: GameLevelAppState = this
   implicit var bulletAppState: BulletAppState = _
-
+  def physicSpace: PhysicsSpace = bulletAppState.getPhysicsSpace
   //  implicit val  app2:SimpleApplication = app
   var nav: Navigation = _
   var playerCharacter: Node = _
-  var levelNode:Node = _
-  var levelGeomNode:Node = _
+  var levelNode: Node = _
+  var levelGeomNode: Node = _
 
   override def initialize(application: Application): Unit = {
 
     bulletAppState = new BulletAppState()
-//    bulletAppState.setDebugEnabled(true)
+    //    bulletAppState.setDebugEnabled(true)
     app.getStateManager.attach(bulletAppState)
     levelNode = new Node("level")
     levelGeomNode = new Node("levelGeom")
@@ -57,9 +57,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
 
 
-//    val p = ParticleUtils.makeFireball()
-//    p.emitAllParticles()
-//    playerCharacter.attachChild(p)
+    //    val p = ParticleUtils.makeFireball()
+    //    p.emitAllParticles()
+    //    playerCharacter.attachChild(p)
 
     for (i <- 0 until 5) {
       spawnRandomEnemy()
@@ -102,6 +102,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   def spawnPlayerCharacter(): Node = {
     val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.2f), 10))
     nc.setEnabled(false)
+    sp.getControl(classOf[CreatureControl]).setSpeed(50f)
     sp.addControl(new CharacterInputControl(cc, sp.getControl(classOf[CreatureControl])))
     sp
   }
@@ -111,13 +112,14 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     spawnGold(findSpawnPosition(), (new Random().nextInt(5) + 1) * 100)
   }
 
-  lazy val goldMaterial:Material  = {
+  lazy val goldMaterial: Material = {
     val goldColor = new ColorRGBA(1f, .8f, .0f, 1f)
     val mat = MakerUtils.makeShaded(goldColor)
     mat.setColor("GlowColor", goldColor)
     mat.setColor("Specular", goldColor)
     mat.setFloat("Shininess", 64f)
     mat.setColor("Ambient", goldColor.mult(0.4f).add(ColorRGBA.White.mult(0.1f)))
+
     mat
   }
 
@@ -156,7 +158,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
     //todo perPixel
     val floor = MakerUtils.makeBox(new Vector3f(0f, -0.1f, 0f), new Vector3f(mapSize / 2, 0.1f, mapSize / 2), "floor",
-      MakerUtils.makeShadedCached(ColorRGBA.Gray),Some(levelGeomNode))
+      MakerUtils.makeShadedCached(ColorRGBA.Gray), Some(levelGeomNode))
     MakerUtils.makeRigid(floor, 0)
     solid = solid :+ floor
 
@@ -166,15 +168,14 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
       val pos = minAngle + new Vector3f(blockSize, 0, blockSize) * new Vector3f(i.toFloat, 0f, j.toFloat)
       if ((0xFF000000 & wallMap(i)(j)) != 0) {
         val c = ColorUtils.colorRGBAFromInt(wallMap(i)(j))
-        println((0xFF000000 & wallMap(i)(j)) >>> 24 )
         //todo fix bottom of boxes
-        val b = MakerUtils.makeBox(pos, new Vector3f(blockSize /2f, blockSize * blockHeight * c.getAlpha, blockSize / 2f), "wall", MakerUtils.makeShadedCached(c),Some(levelGeomNode))
+        val b = MakerUtils.makeBox(pos, new Vector3f(blockSize / 2f, blockSize * blockHeight * c.getAlpha, blockSize / 2f), "wall", MakerUtils.makeShadedCached(c), Some(levelGeomNode))
         MakerUtils.makeRigid(b, 0f)
         solid = solid :+ b
       }
       if ((0xFF000000 & manaMap(i)(j)) != 0) {
         val mat = MakerUtils.makeUnshaded(ColorRGBA.Blue)
-        val b = MakerUtils.makeSphere(pos, blockSize * 1.5f, "manaRegen", mat,Some(levelNode))
+        val b = MakerUtils.makeSphere(pos, blockSize * 1.5f, "manaRegen", mat, Some(levelNode))
         MakerUtils.makeUtility(b)
         b.addControl(new SetColorFromTime(mat, timeFunc = x => FastMath.sin(x * 3), color0 = ColorRGBA.Blue.setAlpha(.3f), color1 = ColorRGBA.Blue.setAlpha(.5f)))
       }

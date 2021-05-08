@@ -55,12 +55,13 @@ object Fireball {
     }
   }
 
-  class LaunchFireball(dir: Vector3f, spellNode: Node, fireball: ParticleEmitter, caster: CreatureControl, speed: Float = 20f, acceleration: Float = 50f, maxSpeed: Float = 100f, distance: Float = 100f) extends AbstractControl {
+  class LaunchFireball(dir: Vector3f, spellNode: Node, fireball: ParticleEmitter, caster: CreatureControl,
+                       speed: Float = 20f, acceleration: Float = 50f, maxSpeed: Float = 100f, distance: Float = 50f) extends AbstractControl {
     spellNode.addControl(this)
 
     val ghost = new GhostControl(new SphereCollisionShape(.5f))
     spellNode.addControl(ghost)
-    caster.level.bulletAppState.getPhysicsSpace.add(ghost)
+    caster.level.physicSpace.add(ghost)
 
     var curSpeed: Float = speed
     val start: Vector3f = spellNode.getLocalTranslation.clone()
@@ -72,6 +73,7 @@ object Fireball {
     override def controlUpdate(tpf: Float): Unit = state match {
       case `flyState` =>
         overlappingCreatures(ghost).find(p => p != caster).foreach { cc =>
+          logger.info(s"fireball hit creature ${cc.name}")
           cc.receiveDamage(50)
 //          spellNode.removeFromParent()
           state = bangState
@@ -82,6 +84,7 @@ object Fireball {
         }
         if(state == flyState){
           overlappingSpatials(ghost).find(sp => sp.getName == "wall").foreach { sp =>
+            logger.info(s"fireball hit wall")
             state = bangState
             bang = ParticleUtils.makeFireExplosion()(caster.level.app)
             fireball.removeFromParent()
@@ -89,15 +92,24 @@ object Fireball {
             bang.emitAllParticles()
           }
         }
-
-        curSpeed += math.min(maxSpeed, acceleration * tpf)
-        spellNode.setLocalTranslation(spellNode.getLocalTranslation + dir.normalize() * tpf * curSpeed)
-        if (spellNode.getLocalTranslation.distance(start) > distance) {
-          spellNode.removeFromParent()
+        //still flying
+        if(state == flyState) {
+          curSpeed += math.min(maxSpeed, acceleration * tpf)
+          spellNode.setLocalTranslation(spellNode.getLocalTranslation + dir.normalize() * tpf * curSpeed)
+          if (spellNode.getLocalTranslation.distance(start) > distance) {
+            logger.info(s"fireball out of range")
+            clear()
+          }
         }
       case `bangState` =>
-        if(bang.getNumVisibleParticles == 0) spellNode.removeFromParent()
+        if(bang.getNumVisibleParticles == 0) clear()
       //
+    }
+
+
+    def clear():Unit = {
+      spatial.removeFromParent()
+      caster.level.physicSpace.remove(ghost)
     }
 
     override def controlRender(rm: RenderManager, vp: ViewPort): Unit = {}

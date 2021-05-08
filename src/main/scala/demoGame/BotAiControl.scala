@@ -9,7 +9,7 @@ import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 class BotAiControl(control:NavigationControl, creatureControl: CreatureControl, val initialPos:Vector3f)(implicit level:GameLevelAppState) extends AbstractControl{
   val maxDistance = 2f
 
-  val followDistance = 110f
+  val followDistance = 60f
 
 
 

@@ -52,7 +52,9 @@ class CreatureMovementControl(radius: Float,
       setWalkDirection(vec)
     }
   }
-  override def setSightDirection(vector3f: Vector3f): Unit = setViewDirection(vector3f)
+  override def setSightDirection(vector3f: Vector3f): Unit = {
+    setViewDirection(vector3f)
+  }
 }
 
 

@@ -13,10 +13,6 @@ trait Creature
 class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAppState) extends AbstractControl {
 
 
-  def death(): Unit = {
-    getSpatial.removeFromParent()
-  }
-
   def receiveDamage(dmg: Int): Unit = {
     val dmgReceived = math.min(info.hp,math.max(dmg, 0))
     info.hp -= dmgReceived
@@ -30,6 +26,11 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAp
   lazy val movement: CreatureMovement = getSpatial.getControl(classOf[CreatureMovementControl])
   lazy val nav: NavigationControl = getSpatial.getControl(classOf[NavigationControl])
 
+
+  def death(): Unit = {
+    getSpatial.removeFromParent()
+    level.physicSpace.remove(movement.asInstanceOf[CreatureMovementControl])
+  }
 
   def state: CreatureState = _state
   private var _state: CreatureState = Normal()
@@ -48,7 +49,11 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAp
     }
     _state = newState
   }
+  def name:String = info.name
 
+  def setSpeed(speed: Float) = {
+    movement.setSpeed(speed)
+  }
 
   def addGold(gold: Int): CreatureControl = {
     info.gold += gold
