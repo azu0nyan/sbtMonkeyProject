@@ -16,6 +16,8 @@ class UiAppState(
                 ) extends BaseAppState with ScreenController {
   var nifty:Nifty = _
 
+  val manaPbName = "manaProgressBar"
+  val manaPbText = "manaProgressBarText"
   val hpPbName = "hpProgressBar"
   val hpPbText = "hpProgressBarText"
   override def initialize(app: Application): Unit = {
@@ -30,6 +32,7 @@ class UiAppState(
 
 
     val screen = new ScreenBuilder("game", UiAppState.this) {
+      controller(UiAppState.this)
       layer(new LayerBuilder {
         backgroundColor(new Color(1, 1, 1, 0f))
         childLayoutCenter()
@@ -42,7 +45,8 @@ class UiAppState(
 //          backgroundColor("#f0FF0000")
           backgroundColor(new Color(0, 0, 0, .2f))
           childLayoutVertical()
-
+          control(UiElementOps.makeProgressBar(hpPbName, hpPbText, "assets/Interface/hpBorder.png", "assets/Interface/hpInner.png"))
+          control(UiElementOps.makeProgressBar(manaPbName, manaPbText, "assets/Interface/manaBorder.png", "assets/Interface/manaInner.png"))
           text(new TextBuilder {
             color(new Color(1, .7f, .4f, 1f))
 //            backgroundColor("#00FF0000")
@@ -51,7 +55,7 @@ class UiAppState(
             text("GOLD:")
             width("*")
           })
-          control(UiElementOps.progressBar(hpPbName, hpPbText))
+
 
         })
       })
@@ -66,16 +70,31 @@ class UiAppState(
   }
 
   override def update(tpf: Float): Unit = {
+    updateManaBar()
+    updateGoldText()
+    updateHpBar()
+  }
 
+  def updateGoldText() = {
     val player = gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl])
     val gold = player.info.gold
     UiElementOps.setText("goldText", "game", nifty, s"GOLD $gold")
+  }
 
+  def updateManaBar():Unit = {
+    val player = gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl])
+    val manaStr = s"\\#ffffff#${player.info.mana} / ${player.info.maxMana}"
+    val manaPercentage = player.info.mana.toFloat / player.info.maxMana.toFloat
+    UiElementOps.setProgress(manaPbName, "game", nifty, manaPercentage)
+    UiElementOps.setText(manaPbText, "game", nifty, manaStr)
+  }
+
+  def updateHpBar() :Unit = {
+    val player = gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl])
     val hpStr = s"${player.info.hp} / ${player.info.maxHp}"
-    val hpPercentage = player.info.hp.toFloat / player.info.maxMana.toFloat
+    val hpPercentage = player.info.hp.toFloat / player.info.maxHp.toFloat
     UiElementOps.setProgress(hpPbName, "game", nifty, hpPercentage)
     UiElementOps.setText(hpPbText, "game", nifty, hpStr)
-
   }
 
   override def cleanup(app: Application): Unit = {}

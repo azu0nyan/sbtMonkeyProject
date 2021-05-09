@@ -4,7 +4,7 @@ import com.jme3.effect.Particle
 import com.jme3.effect.influencers.DefaultParticleInfluencer
 import com.jme3.effect.shapes.EmitterShape
 import com.jme3.math.{FastMath, Vector3f}
-import demoGame.JmeImplicits3FHelper._
+import demoGame.JmeImplicitsFHelper._
 
 class SphereParticleInfluencer(center: Vector3f= Vector3f.ZERO, fromCenterVelocity: Float = 1f, normalizeFromCenter: Boolean = true) extends DefaultParticleInfluencer {
 

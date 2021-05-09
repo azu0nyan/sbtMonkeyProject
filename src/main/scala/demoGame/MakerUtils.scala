@@ -11,7 +11,7 @@ import com.jme3.scene.debug.Arrow
 import com.jme3.scene.{Geometry, Node, Spatial}
 import com.jme3.scene.shape.{Box, Cylinder, Sphere}
 import com.jme3.util.TangentBinormalGenerator
-import demoGame.JmeImplicits3FHelper.V3Helper
+import demoGame.JmeImplicitsFHelper.V3Helper
 import demoGame.gameplay.CreatureMovementControl
 
 import scala.collection.mutable

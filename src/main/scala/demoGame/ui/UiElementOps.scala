@@ -10,10 +10,10 @@ object UiElementOps {
 
   val minPbWidth = 32
 
-  def progressBar(progressBarId:String,
-                  progressBarTextId:String,
-                  outerFilename:String = "assets/Interface/pbBorder.png",
-                  innerFilename:String="assets/Interface/pbInner.png"):ControlBuilder = {
+  def makeProgressBar(progressBarId:String,
+                      progressBarTextId:String,
+                      outerFilename:String,
+                      innerFilename:String):ControlBuilder = {
     new ControlBuilder(s"${progressBarId}Control") {
 
       alignCenter()

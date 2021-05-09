@@ -2,7 +2,7 @@ package demoGame
 
 import com.jme3.app.SimpleApplication
 import com.jme3.system.AppSettings
-import JmeImplicits3FHelper._
+import JmeImplicitsFHelper._
 import demoGame.gameplay.GameLevelAppState
 import demoGame.graphics.GraphicsUtils
 import demoGame.ui.UiAppState

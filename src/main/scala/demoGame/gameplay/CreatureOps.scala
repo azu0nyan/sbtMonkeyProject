@@ -7,24 +7,25 @@ import com.jme3.math.{ColorRGBA, FastMath, Quaternion, Ray, Vector3f}
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
 import com.jme3.scene.{Node, Spatial}
 import demoGame.{MakerUtils, NavigationControl}
-import demoGame.gameplay.CreatureInfo.{CreatureInfo, CreatureType}
+import demoGame.gameplay.CreatureInfo.{CreatureInfo, CreatureType, infoFromType}
 
 object CreatureOps {
 
 
+  def makeCreatureFromType(pos: Vector3f, creatureType: CreatureType)(implicit level: GameLevelAppState): (Node, CreatureMovementControl, NavigationControl) = {
+    val info = infoFromType(creatureType)
+    makeCreature(pos, info)
+  }
+
   def makeCreature(pos: Vector3f, info: CreatureInfo)(implicit level: GameLevelAppState): (Node, CreatureMovementControl, NavigationControl) = {
-    /*  val r = new Ray(new Vector3f(0, 100, 0), new Vector3f(0, -1, 0))
-   val res = new CollisionResults
-   app.getRootNode.collideWith(r, res)
-   val pos = if (res.size() >= 1) {
-     res.getClosestCollision.getContactPoint + new Vector3f(0f, .75f, 0f)
-   } else new Vector3f(0f, 2f, 0f)*/
     val sp = makeCreatureNode(info.creatureType)(level)
     sp.setLocalTranslation(pos)
     val cc = MakerUtils.makeCharacterControl(sp)(level.app)
     val nc = new NavigationControl(cc, level.nav)(level.app)
     sp.addControl(nc)
-    sp.addControl(new CreatureControl(info))
+    val creatureControl = new CreatureControl(info)
+    sp.addControl(creatureControl)
+    CreatureInfo.addSpells(creatureControl)
     (sp, cc, nc)
   }
 
@@ -69,6 +70,9 @@ object CreatureOps {
         dummyParent.attachChild(g)
         dummyParent
     }
+
+
+
 
 
 }

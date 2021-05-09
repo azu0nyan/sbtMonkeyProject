@@ -6,7 +6,7 @@ import com.jme3.math.{ColorRGBA, Vector2f, Vector3f}
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.Spatial
 import com.jme3.scene.control.AbstractControl
-import demoGame.JmeImplicits3FHelper._
+import demoGame.JmeImplicitsFHelper._
 import demoGame.gameplay.{CreatureMovement, CreatureMovementControl}
 
 

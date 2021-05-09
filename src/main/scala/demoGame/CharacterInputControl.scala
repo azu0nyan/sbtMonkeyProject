@@ -7,16 +7,16 @@ import com.jme3.input.controls.{ActionListener, KeyTrigger}
 import com.jme3.math.Vector3f
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
-import JmeImplicits3FHelper._
-import demoGame.gameplay.actions.Fireball.Fireball
-import demoGame.gameplay.actions.GeometricExplosion.GeometricExplosion
+import JmeImplicitsFHelper._
+import demoGame.gameplay.spells.GeometricBall.GeometricBall
+import demoGame.gameplay.spells.GeometricExplosion.GeometricExplosion
 import demoGame.gameplay.{CreatureControl, CreatureMovement, CreatureMovementControl}
 
-class CharacterInputControl(creatureMovement:CreatureMovement, creatureControl:CreatureControl)(implicit app:SimpleApplication) extends AbstractControl with ActionListener{
-  var isLeft:Boolean = false
-  var isRight:Boolean = false
-  var isForward:Boolean = false
-  var isBackward:Boolean = false
+class CharacterInputControl(creatureMovement: CreatureMovement, creatureControl: CreatureControl)(implicit app: SimpleApplication) extends AbstractControl with ActionListener {
+  var isLeft: Boolean = false
+  var isRight: Boolean = false
+  var isForward: Boolean = false
+  var isBackward: Boolean = false
 
 
   app.getInputManager.addMapping("chLeft", new KeyTrigger(KeyInput.KEY_A))
@@ -27,9 +27,9 @@ class CharacterInputControl(creatureMovement:CreatureMovement, creatureControl:C
   app.getInputManager.addMapping("chCast1", new KeyTrigger(KeyInput.KEY_E))
   app.getInputManager.addMapping("chCast2", new KeyTrigger(KeyInput.KEY_Q))
 
-  app.getInputManager.addListener(this, "chCast1","chCast2", "chLeft", "chRight", "chForward", "chBackward", "chJump")
+  app.getInputManager.addListener(this, "chCast1", "chCast2", "chLeft", "chRight", "chForward", "chBackward", "chJump")
 
-  def cameraDirFlattened:Vector3f = {
+  def cameraDirFlattened: Vector3f = {
     val camDir = app.getCamera.getDirection.clone()
     camDir.y = 0;
     camDir
@@ -43,11 +43,11 @@ class CharacterInputControl(creatureMovement:CreatureMovement, creatureControl:C
     camDir.normalizeLocal()
     camLeft.normalizeLocal()
 
-    val dir:Vector3f = new Vector3f()
-    if(isLeft) dir += camLeft
-    if(isRight) dir -= camLeft
-    if(isForward) dir -= camDir
-    if(isBackward) dir += camDir
+    val dir: Vector3f = new Vector3f()
+    if (isLeft) dir += camLeft
+    if (isRight) dir -= camLeft
+    if (isForward) dir -= camDir
+    if (isBackward) dir += camDir
 
     creatureMovement.setMoveDirection(dir.normalize)
     creatureMovement.setSightDirection(camDir.negate())
@@ -61,9 +61,9 @@ class CharacterInputControl(creatureMovement:CreatureMovement, creatureControl:C
       case "chForward" => isForward = isPressed
       case "chBackward" => isBackward = isPressed
       case "chCast1" if isPressed =>
-        creatureControl.doAction(new GeometricExplosion(cameraDirFlattened, creatureControl))
+        if (creatureControl.spells.size >= 1) creatureControl.castSpell(creatureControl.spells(0))
       case "chCast2" if isPressed =>
-        creatureControl.doAction(new Fireball(cameraDirFlattened, creatureControl))
+        if (creatureControl.spells.size >= 2) creatureControl.castSpell(creatureControl.spells(1))
       case "chJump" if isPressed =>
         creatureMovement.jumpNow()
       case _ =>

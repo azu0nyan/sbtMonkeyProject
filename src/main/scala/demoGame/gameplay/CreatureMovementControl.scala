@@ -7,10 +7,11 @@ import com.jme3.bullet.objects.PhysicsRigidBody
 import com.jme3.math.{FastMath, MathUtils, Quaternion, Vector2f, Vector3f}
 import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.control.AbstractControl
-import demoGame.JmeImplicits3FHelper._
+import demoGame.JmeImplicitsFHelper._
 import demoGame.{CharacterInputControl, MyMathUtils, NavigationControl}
 
 trait CreatureMovement{
+  def getSightDirection:Vector3f
   def setSightDirection(vector3f: Vector3f): Unit
   def maxSpeed:Float
   def setSpeed(sp:Float):Unit
@@ -18,7 +19,6 @@ trait CreatureMovement{
   def allowMovement():Unit
   def jumpNow():Unit
   def setMoveDirection(dirWithCel:Vector3f):Unit
-
   def controlledRigidBody:PhysicsRigidBody
 }
 
@@ -85,6 +85,8 @@ class CreatureMovementControl(radius: Float,
     targetSightDirection.normalizeLocal()
 //    setViewDirection(vector3f)
   }
+
+  def getSightDirection:Vector3f = getViewDirection
 
  override def controlledRigidBody:PhysicsRigidBody = rigidBody
 }

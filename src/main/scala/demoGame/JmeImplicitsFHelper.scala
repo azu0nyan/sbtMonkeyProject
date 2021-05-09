@@ -9,7 +9,7 @@ import demoGame.gameplay.CreatureControl
 
 import scala.jdk.CollectionConverters.ListHasAsScala
 
-object JmeImplicits3FHelper {
+object JmeImplicitsFHelper {
 
   implicit def floatToVe(f: Float): Vector3f = new Vector3f(f, f, f)
 

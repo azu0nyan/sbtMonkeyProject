@@ -11,16 +11,20 @@ import com.jme3.scene.{Geometry, Node, Spatial}
 import demoGame.graphics.{ColorUtils, SetColorFromTime}
 import demoGame.{CharacterInputControl, _}
 import demoGame.gameplay.CreatureInfo.{AngryBox, AwakenCylinder, CreatureInfo, CreatureType}
-import JmeImplicits3FHelper._
+import JmeImplicitsFHelper._
 import com.jme3.material.Material
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
+import demoGame.graphics.particles.ParticleUtils
 import jme3tools.optimize.GeometryBatchFactory
+import org.slf4j.LoggerFactory
 
 import javax.imageio.ImageIO
 import scala.jdk.CollectionConverters._
 import scala.util.Random
 
 class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4f, val blockHeight: Float = 5f)(implicit val app: SimpleApplication) extends BaseAppState {
+  val logger = LoggerFactory.getLogger(classOf[GameLevelAppState].getName)
+
   implicit val level: GameLevelAppState = this
   implicit var bulletAppState: BulletAppState = _
   def physicSpace: PhysicsSpace = bulletAppState.getPhysicsSpace
@@ -31,9 +35,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   var levelGeomNode: Node = _
 
   override def initialize(application: Application): Unit = {
-
+    logger.info(s"Game level init...")
     bulletAppState = new BulletAppState()
-//        bulletAppState.setDebugEnabled(true)
+    //        bulletAppState.setDebugEnabled(true)
     app.getStateManager.attach(bulletAppState)
     levelNode = new Node("level")
     levelGeomNode = new Node("levelGeom")
@@ -57,7 +61,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
 
 
-    //    val p = ParticleUtils.makeFireball()
+    //    val p = ParticleUtils.makeGeometricBall()
     //    p.emitAllParticles()
     //    playerCharacter.attachChild(p)
 
@@ -72,7 +76,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   }
 
   def spawnEnemy(pos: Vector3f, creatureType: CreatureType) = {
-    val (sp, cc, nc) = CreatureOps.makeCreature(pos, CreatureInfo.infoFromType(creatureType))
+    val (sp, cc, nc) = CreatureOps.makeCreatureFromType(pos, creatureType)
 
     val botAi = new BotAiControl(nc, sp.getControl(classOf[CreatureControl]), pos)
     sp.addControl(botAi)
@@ -100,8 +104,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   }
 
   def spawnPlayerCharacter(): Node = {
-    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 100, 100, 10, 20, AngryBox(.5f), 10))
+    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 1000, 1000, 10, 20, AngryBox(.5f), 10))
     nc.setEnabled(false)
+    CreatureInfo.addAllSpells(sp.getControl(classOf[CreatureControl]))
     sp.getControl(classOf[CreatureControl]).setSpeed(50f)
     sp.addControl(new CharacterInputControl(cc, sp.getControl(classOf[CreatureControl])))
     sp
@@ -112,21 +117,10 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     spawnGold(findSpawnPosition(), (new Random().nextInt(5) + 1) * 100)
   }
 
-  lazy val goldMaterial: Material = {
-    val goldColor = new ColorRGBA(1f, .8f, .0f, 1f)
-    val mat = MakerUtils.makeShaded(goldColor)
-    mat.setColor("GlowColor", goldColor)
-    mat.setColor("Specular", goldColor)
-    mat.setFloat("Shininess", 64f)
-    mat.setColor("Ambient", goldColor.mult(0.4f).add(ColorRGBA.White.mult(0.1f)))
 
-    mat
-  }
 
   def spawnGold(at: Vector3f, amount: Int) = {
-    val size = math.pow(amount, 1 / 3f).toFloat * .1f
-    val gold = MakerUtils.makeBox(at, new Vector3f(size, size, size), "gold", goldMaterial, Some(levelNode))
-    new GoldPileControl(gold, amount)
+    new GoldPileControl(at, amount)
   }
 
 
@@ -143,6 +137,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
       for (i <- 0 until msx) yield for (j <- 0 until msy) yield mapImg.getRGB(i, j)
     map
   }
+
 
   def initWalls(): Seq[Geometry] = {
     var solid: Seq[Geometry] = Seq()
@@ -174,10 +169,8 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
         solid = solid :+ b
       }
       if ((0xFF000000 & manaMap(i)(j)) != 0) {
-        val mat = MakerUtils.makeUnshaded(ColorRGBA.Blue)
-        val b = MakerUtils.makeSphere(pos, blockSize * 1.5f, "manaRegen", mat, Some(levelNode))
-        MakerUtils.makeUtility(b)
-        b.addControl(new SetColorFromTime(mat, timeFunc = x => FastMath.sin(x * 3), color0 = ColorRGBA.Blue.setAlpha(.3f), color1 = ColorRGBA.Blue.setAlpha(.5f)))
+        val c = ColorUtils.colorRGBAFromInt(manaMap(i)(j))
+        new ManaDome(pos, c.getAlpha)
       }
       if ((0xFF000000 & goldMap(i)(j)) != 0) {
         spawnGold(pos, 300)

@@ -1,6 +1,12 @@
 package demoGame.gameplay
 
+import demoGame.gameplay.spells.CreatureSpell.CreatureSpell
+import demoGame.gameplay.spells.{GeometricExplosion, SpellLibrary}
+
 object CreatureInfo {
+
+  var maxId = -1
+
   class CreatureInfo(
                       var name: String,
                       val maxHp: Int,
@@ -8,11 +14,11 @@ object CreatureInfo {
                       var atk: Int,
                       var speed: Float,
                       var creatureType: CreatureType,
-                      var gold: Int
+                      var gold: Int,
                     ) {
 
-    var mana:Int = maxMana
-    var hp:Int = maxHp
+    var mana: Int = maxMana
+    var hp: Int = maxHp
 
   }
 
@@ -20,9 +26,36 @@ object CreatureInfo {
   case class AngryBox(angry: Float) extends CreatureType
   case class AwakenCylinder() extends CreatureType
 
+  def getId():Int = {
+    maxId += 1
+    maxId
+  }
   def infoFromType(creatureType: CreatureType): CreatureInfo = creatureType match {
-    case AngryBox(angry) => new CreatureInfo("AngryBox", 100, 10, 10, 10, creatureType, 0)
-    case AwakenCylinder() => new CreatureInfo("AwakenCylinder", 50, 100, 10, 20, creatureType, 0)
+    case AngryBox(angry) =>
+      new CreatureInfo(s"Angry Box ${maxId}", (50 + angry * 50).toInt, 50, 10, 10, creatureType, 0)
+    case AwakenCylinder() =>
+      new CreatureInfo(s"Awaken Cylinder ${maxId}", 50, 100, 10, 20, creatureType, 0)
+  }
+
+
+  def addSpells(creatureControl: CreatureControl): Unit = {
+    creatureControl.info.creatureType match {
+      case AngryBox(angry) =>
+        creatureControl.spells = Seq(
+          SpellLibrary.makeFireball(creatureControl, 0)
+        )
+      case AwakenCylinder() =>
+        creatureControl.spells = Seq(
+          SpellLibrary.makeGeometricExplosion(creatureControl, 0)
+        )
+    }
+  }
+
+  def addAllSpells(creatureControl: CreatureControl): Unit = {
+    creatureControl.spells = Seq(
+      SpellLibrary.makeFireball(creatureControl, 10),
+      SpellLibrary.makeGeometricExplosion(creatureControl, 10)
+    )
   }
 }
 
