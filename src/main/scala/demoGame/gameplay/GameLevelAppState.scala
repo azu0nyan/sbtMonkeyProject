@@ -14,6 +14,7 @@ import demoGame.gameplay.CreatureInfo.{AngryBox, AwakenCylinder, CreatureInfo, C
 import JmeImplicitsFHelper._
 import com.jme3.material.Material
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
+import demoGame.gameplay.shop.Shop
 import demoGame.graphics.particles.ParticleUtils
 import jme3tools.optimize.GeometryBatchFactory
 import org.slf4j.LoggerFactory
@@ -104,7 +105,8 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   }
 
   def spawnPlayerCharacter(): Node = {
-    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f), new CreatureInfo("Player", 1000, 1000, 10, 20, AngryBox(.5f), 10))
+    val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f),
+      new CreatureInfo("Player", 1000, 1000, AngryBox(.5f), 20,  10))
     nc.setEnabled(false)
     CreatureInfo.addAllSpells(sp.getControl(classOf[CreatureControl]))
     sp.getControl(classOf[CreatureControl]).setSpeed(50f)
@@ -140,6 +142,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
 
   def initWalls(): Seq[Geometry] = {
+    //todo add to map
+    new Shop(new Vector3f(30, 9.5f, 30), Seq())
+
     var solid: Seq[Geometry] = Seq()
 
     val wallMap = loadImage(wallsResourceName)

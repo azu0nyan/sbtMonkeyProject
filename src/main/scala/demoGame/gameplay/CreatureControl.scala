@@ -16,6 +16,7 @@ trait Creature
 class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAppState) extends AbstractControl {
 
 
+
   val logger = LoggerFactory.getLogger(classOf[CreatureControl].getName)
 
   implicit val cr: CreatureControl = this
@@ -58,6 +59,14 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAp
 
   def addGold(gold: Int): CreatureControl = {
     info.gold += gold
+    this
+  }
+
+  def gold:Int  = info.gold
+
+
+  def spendGold(gold:Int):CreatureControl = {
+    info.gold -= gold
     this
   }
 

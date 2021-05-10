@@ -41,6 +41,7 @@ class CreatureMovementControl(radius: Float,
     _maxSpeed = sp
   }
 
+
   def forbidMovement(): Unit = {
     movementEnabled = false
     setWalkDirection(Vector3f.ZERO)
@@ -89,6 +90,7 @@ class CreatureMovementControl(radius: Float,
   def getSightDirection:Vector3f = getViewDirection
 
  override def controlledRigidBody:PhysicsRigidBody = rigidBody
+
 }
 
 

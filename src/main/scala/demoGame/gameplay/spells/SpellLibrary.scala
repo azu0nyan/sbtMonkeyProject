@@ -5,26 +5,34 @@ import CreatureSpell.{CreatureSpell, SpellLevel}
 
 object SpellLibrary {
 
-  type SpellMaker = (CreatureControl, SpellLevel) => CreatureSpell
+//  case class SpellMaker(CreatureControl, SpellLevel) => CreatureSpell
+  sealed trait SpellMaker {
+    def name:String
+    def apply(c:CreatureControl, lvl:Int):CreatureSpell
+  }
 
-  val makeGeometricExplosion: SpellMaker = (c, lvl) =>
-    new CreatureSpell(
+  object GeometricExplosionMaker extends SpellMaker {
+    override def name: String = "Geometric explosion"
+    override def apply(c:CreatureControl, lvl:Int): CreatureSpell = new CreatureSpell(
       c,
-      "Geometric explosion",
+      name,
       "/assets/Interface/spellIcons/geometricExplosion.png",
-      l => 10 + l,
+      l => 10 + l * 2,
       GeometricExplosion.fromLeverAndCaster,
       lvl
     )
+  }
 
-  val makeGeometricBall: SpellMaker = (c, lvl) => new CreatureSpell(
-    c,
-    "Geometric ball",
-    "/assets/Interface/spellIcons/geometricBall.png",
-    l => 10 + l,
-    GeometricBall.fromLeverAndCaster,
-    lvl
-  )
-
+  object GeometricBallMaker extends SpellMaker {
+    override def name: String = "Geometric ball"
+    override def apply(c:CreatureControl, lvl:Int): CreatureSpell = new CreatureSpell(
+      c,
+      name,
+      "/assets/Interface/spellIcons/geometricBall.png",
+      l => 10 + l,
+      GeometricBall.fromLeverAndCaster,
+      lvl
+    )
+  }
 
 }

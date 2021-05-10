@@ -3,7 +3,7 @@ package demoGame.graphics.particles
 import com.jme3.app.SimpleApplication
 import com.jme3.effect.ParticleEmitter
 import com.jme3.effect.ParticleMesh.Type
-import com.jme3.effect.shapes.EmitterSphereShape
+import com.jme3.effect.shapes.{EmitterBoxShape, EmitterSphereShape}
 import com.jme3.math.{ColorRGBA, Vector3f}
 
 object ParticleUtils {
@@ -170,6 +170,36 @@ object ParticleUtils {
     manaDome.setHighLife(.7f)
 
     manaDome.setParticlesPerSec(0)
+
+    manaDome
+  }
+
+
+  def makeShopOnBuy(halfExtents:Vector3f)(implicit app: SimpleApplication):ParticleEmitter = {
+    val manaDome = new ParticleEmitter("GeometricExplosion", Type.Triangle, 100)
+    import com.jme3.material.Material
+    val flash_mat = new Material(app.getAssetManager, "Common/MatDefs/Misc/Particle.j3md")
+    flash_mat.setTexture("Texture", app.getAssetManager.loadTexture("assets/Effect/square.png"))
+    manaDome.setMaterial(flash_mat)
+    manaDome.setImagesX(1) // columns
+    manaDome.setImagesY(1) // rows
+    manaDome.setSelectRandomImage(true)
+
+    manaDome.setParticleInfluencer(new SphereParticleInfluencer(fromCenterVelocity = 0))
+    manaDome.setShape(new EmitterBoxShape(halfExtents.negate(), halfExtents))
+    manaDome.getParticleInfluencer().setInitialVelocity(Vector3f.ZERO)
+    manaDome.getParticleInfluencer().setVelocityVariation(0f)
+
+    manaDome.setStartColor(new ColorRGBA(.5f, 1f, 0f, .1f))
+    manaDome.setEndColor(new ColorRGBA(.0f, 1f, 0f, 1f))
+    manaDome.setRandomAngle(true)
+    manaDome.setStartSize(.5f)
+    manaDome.setEndSize(1f)
+    manaDome.setGravity(0, 0, 0)
+    manaDome.setLowLife(.3f)
+    manaDome.setHighLife(.7f)
+
+    manaDome.setParticlesPerSec(5)
 
     manaDome
   }
