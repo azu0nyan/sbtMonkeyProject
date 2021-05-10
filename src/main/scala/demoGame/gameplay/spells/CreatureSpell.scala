@@ -10,7 +10,9 @@ object CreatureSpell {
 
   type SpellLevel = Int
 
-  class CreatureSpell(creature: CreatureControl,
+  class CreatureSpell(var creature: CreatureControl,
+                      var name:String,
+                      var spellImageFile:String,
                       var manaCostFunc: SpellLevel => Int,
                       var castActionBuilder: (SpellLevel, CreatureControl) => ContinuousState,
                       var level: Int) {

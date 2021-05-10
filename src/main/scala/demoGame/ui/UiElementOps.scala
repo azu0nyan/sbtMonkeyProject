@@ -37,7 +37,6 @@ object UiElementOps {
         })
         text(new TextBuilder {
           id(progressBarTextId)
-//          renderOrder(3)
           x("50%")
           y("20%")
           color(new Color(1, 1f, 1f, 1f))
@@ -65,13 +64,5 @@ object UiElementOps {
       el.getRenderer(classOf[TextRenderer]).setText(text)
     }
   }
-
-  /*{
-    <image filename="Interface/border.png" childLayout="absolute"
-           imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15">
-      <image id="progressbar" x="0" y="0" filename="Interface/inner.png" width="32px"
-             height="100%" imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15" />
-    </image>
-  }*/
 
 }

@@ -32,9 +32,9 @@ object CreatureInfo {
   }
   def infoFromType(creatureType: CreatureType): CreatureInfo = creatureType match {
     case AngryBox(angry) =>
-      new CreatureInfo(s"Angry Box ${maxId}", (50 + angry * 50).toInt, 50, 10, 10, creatureType, 0)
+      new CreatureInfo(s"Angry Box ${getId()}", (50 + angry * 50).toInt, 50, 10, 10, creatureType, 0)
     case AwakenCylinder() =>
-      new CreatureInfo(s"Awaken Cylinder ${maxId}", 50, 100, 10, 20, creatureType, 0)
+      new CreatureInfo(s"Awaken Cylinder ${getId()}", 50, 100, 10, 20, creatureType, 0)
   }
 
 
@@ -42,7 +42,7 @@ object CreatureInfo {
     creatureControl.info.creatureType match {
       case AngryBox(angry) =>
         creatureControl.spells = Seq(
-          SpellLibrary.makeFireball(creatureControl, 0)
+          SpellLibrary.makeGeometricBall(creatureControl, 0)
         )
       case AwakenCylinder() =>
         creatureControl.spells = Seq(
@@ -53,7 +53,7 @@ object CreatureInfo {
 
   def addAllSpells(creatureControl: CreatureControl): Unit = {
     creatureControl.spells = Seq(
-      SpellLibrary.makeFireball(creatureControl, 10),
+      SpellLibrary.makeGeometricBall(creatureControl, 10),
       SpellLibrary.makeGeometricExplosion(creatureControl, 10)
     )
   }

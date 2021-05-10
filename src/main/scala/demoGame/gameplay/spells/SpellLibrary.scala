@@ -10,13 +10,17 @@ object SpellLibrary {
   val makeGeometricExplosion: SpellMaker = (c, lvl) =>
     new CreatureSpell(
       c,
+      "Geometric explosion",
+      "/assets/Interface/spellIcons/geometricExplosion.png",
       l => 10 + l,
       GeometricExplosion.fromLeverAndCaster,
       lvl
     )
 
-  val makeFireball: SpellMaker = (c, lvl) => new CreatureSpell(
+  val makeGeometricBall: SpellMaker = (c, lvl) => new CreatureSpell(
     c,
+    "Geometric ball",
+    "/assets/Interface/spellIcons/geometricBall.png",
     l => 10 + l,
     GeometricBall.fromLeverAndCaster,
     lvl
