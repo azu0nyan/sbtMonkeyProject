@@ -15,10 +15,8 @@ object CreatureInfo {
                       var gold: Int,
                       val initialSpeed: Float,
                     ) {
-
     var mana: Int = maxMana
     var hp: Int = maxHp
-
   }
 
   sealed trait CreatureType
