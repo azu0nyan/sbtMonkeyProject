@@ -16,7 +16,7 @@ import demoGame.gameplay.shop.ShopLot.ShopLot
 import demoGame.graphics.SetColorFromTime
 import demoGame.graphics.particles.ParticleUtils
 
-class Shop(pos:Vector3f, lots:Seq[ShopLot])(implicit level:GameLevelAppState) extends AbstractControl{
+class ShopControl(pos:Vector3f, lots:Seq[ShopLot])(implicit level:GameLevelAppState) extends AbstractControl{
   val node = new Node("Shop")
   node.addControl(this)
   level.levelNode.attachChild(node)
@@ -51,6 +51,9 @@ class Shop(pos:Vector3f, lots:Seq[ShopLot])(implicit level:GameLevelAppState) ex
       }
     }
   }
+
+  def buyById(cr:CreatureControl, lotId:Int):Unit =
+    if(lots.indices.contains(lotId)) buy(cr, lots(lotId))
 
   override def controlUpdate(tpf: Float): Unit = {
 //    onBuyParticles.emitParticles(10)

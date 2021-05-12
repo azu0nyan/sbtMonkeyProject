@@ -10,7 +10,7 @@ import demoGame.JmeImplicitsFHelper
 import demoGame.graphics.particles.ParticleUtils
 
 
-class ManaDome(pos: Vector3f, power01: Float)(implicit level: GameLevelAppState) extends AbstractControl {
+class ManaDomeControl(pos: Vector3f, power01: Float)(implicit level: GameLevelAppState) extends AbstractControl {
 
   val maxRegenPerSec = 50
   val minRegenPerSec = 10

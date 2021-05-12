@@ -14,7 +14,7 @@ import demoGame.gameplay.CreatureInfo.{AngryBox, AwakenCylinder, CreatureInfo, C
 import JmeImplicitsFHelper._
 import com.jme3.material.Material
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
-import demoGame.gameplay.shop.Shop
+import demoGame.gameplay.shop.ShopControl
 import demoGame.graphics.particles.ParticleUtils
 import jme3tools.optimize.GeometryBatchFactory
 import org.slf4j.LoggerFactory
@@ -143,7 +143,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
   def initWalls(): Seq[Geometry] = {
     //todo add to map
-    new Shop(new Vector3f(30, 9.5f, 30), Seq())
+    new ShopControl(new Vector3f(30, 9.5f, 30), Seq())
 
     var solid: Seq[Geometry] = Seq()
 
@@ -175,7 +175,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
       }
       if ((0xFF000000 & manaMap(i)(j)) != 0) {
         val c = ColorUtils.colorRGBAFromInt(manaMap(i)(j))
-        new ManaDome(pos, c.getAlpha)
+        new ManaDomeControl(pos, c.getAlpha)
       }
       if ((0xFF000000 & goldMap(i)(j)) != 0) {
         spawnGold(pos, 300)

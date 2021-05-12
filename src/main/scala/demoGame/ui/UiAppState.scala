@@ -10,16 +10,21 @@ import de.lessvoid.nifty.elements.render.TextRenderer
 import de.lessvoid.nifty.screen.{Screen, ScreenController}
 import de.lessvoid.nifty.tools.Color
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
-import demoGame.ui.GameUiScreen.gameScreenId
+import demoGame.ui.UiAppState.{gameScreenId, shopScreenId}
 
 import java.awt.event.{KeyEvent, KeyListener}
-
+object UiAppState{
+  val gameScreenId = "gameScreenId"
+  val shopScreenId = "shopScreenId"
+}
 class UiAppState(
                   gameLevelAppState: GameLevelAppState
                 ) extends BaseAppState with ScreenController {
   var nifty:Nifty = _
 
   var gameScreen:GameUiScreen = _
+
+  var shopScreen:ShopUiScreen = _
 
   override def initialize(app: Application): Unit = {
 
@@ -29,9 +34,14 @@ class UiAppState(
     nifty = niftyDisplay.getNifty
     app.getGuiViewPort.addProcessor(niftyDisplay)
 
+    nifty.loadStyleFile("nifty-default-styles.xml")
+    nifty.loadControlFile("nifty-default-controls.xml")
+
 
     gameScreen = new GameUiScreen(nifty, gameLevelAppState)
-    nifty.gotoScreen(gameScreenId)
+    shopScreen = new ShopUiScreen(nifty, null, null)
+//    nifty.gotoScreen(gameScreenId)
+    nifty.gotoScreen(shopScreenId)
   }
 
   def addButton = {
@@ -63,6 +73,8 @@ class UiAppState(
 
 
   }
+
+
 
 
   override def update(tpf: Float): Unit = {

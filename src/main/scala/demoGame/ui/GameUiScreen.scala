@@ -8,11 +8,8 @@ import de.lessvoid.nifty.tools.{Color, SizeValue}
 import demoGame.gameplay.CreatureState.{ContinuousState, Stunned}
 import demoGame.gameplay.spells.CreatureSpell.{CreatureSpell, SpellLevel}
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
-import demoGame.ui.GameUiScreen.gameScreenId
+import demoGame.ui.UiAppState.gameScreenId
 
-object GameUiScreen {
-  val gameScreenId = "gameScreenId"
-}
 class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends ScreenController {
 
 
