@@ -10,13 +10,18 @@ import com.jme3.renderer.{RenderManager, ViewPort}
 import com.jme3.scene.Node
 import com.jme3.scene.Spatial.CullHint
 import com.jme3.scene.control.AbstractControl
-import demoGame.MakerUtils
+import demoGame.JmeImplicitsFHelper.overlappingCreatures
+import demoGame.{JmeImplicitsFHelper, MakerUtils}
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 import demoGame.gameplay.shop.ShopLot.ShopLot
 import demoGame.graphics.SetColorFromTime
 import demoGame.graphics.particles.ParticleUtils
+import org.slf4j.LoggerFactory
 
 class ShopControl(pos:Vector3f, lots:Seq[ShopLot])(implicit level:GameLevelAppState) extends AbstractControl{
+  val log = LoggerFactory.getLogger(this.getClass)
+  level.shops = level.shops :+ this
+
   val node = new Node("Shop")
   node.addControl(this)
   level.levelNode.attachChild(node)
@@ -43,18 +48,24 @@ class ShopControl(pos:Vector3f, lots:Seq[ShopLot])(implicit level:GameLevelAppSt
   def availableLots(cr:CreatureControl):Seq[ShopLot] = lots.filter(_.satisfyRequirements(cr))
 
   def buy(cr:CreatureControl, lot:ShopLot) :Unit = {
-    if(lots.contains(lot) && lot.satisfyRequirements(cr) ){
+    if(buyers.contains(cr) &&  lots.contains(lot) && lot.satisfyRequirements(cr) ){
       val price = lot.price(cr)
       if(price <= cr.gold) {
         lot.buy(cr)
         cr.spendGold(price)
+        log.info(s"Creature ${cr.info.name} bought ${lot.itemDescription} for $price.")
+      } else {
+        log.info(s"Creature ${cr.info.name} cant buy ${lot.itemDescription} for $price, no money.")
       }
+    } else{
+      log.warn(s"Creature ${cr.info.name} attempted to buy ${lot.itemDescription}.")
     }
   }
 
   def buyById(cr:CreatureControl, lotId:Int):Unit =
     if(lots.indices.contains(lotId)) buy(cr, lots(lotId))
 
+  def  buyers:Seq[CreatureControl] = overlappingCreatures(ghost)
   override def controlUpdate(tpf: Float): Unit = {
 //    onBuyParticles.emitParticles(10)
   }

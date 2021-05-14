@@ -9,9 +9,10 @@ import demoGame.gameplay.CreatureState.{ContinuousState, Stunned}
 import demoGame.gameplay.spells.CreatureSpell.{CreatureSpell, SpellLevel}
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 import demoGame.ui.UiAppState.gameScreenId
+import org.slf4j.LoggerFactory
 
 class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends ScreenController {
-
+  val log = LoggerFactory.getLogger(this.getClass)
 
   val manaPbName = "manaProgressBar"
   val manaPbText = "manaProgressBarText"
@@ -191,7 +192,12 @@ class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends S
 
 
   override def bind(nifty: Nifty, screen: Screen): Unit = {
+    log.info(s"Bind")
   }
-  override def onStartScreen(): Unit = {}
-  override def onEndScreen(): Unit = {}
+  override def onStartScreen(): Unit = {
+    log.info(s"Start")
+  }
+  override def onEndScreen(): Unit = {
+    log.info(s"End")
+  }
 }

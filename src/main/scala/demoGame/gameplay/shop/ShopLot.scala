@@ -25,7 +25,7 @@ object ShopLot {
 
   }
 
-  case class UpdateSpellLevel(
+  case class UpgradeSpellLevel(
                         priceFromLevel:SpellLevel => Int,
                         spellName:String,
                         shopImage: String,
@@ -36,7 +36,7 @@ object ShopLot {
     override def buy(cr: CreatureControl): Unit = cr.spells.find(_.name == spellName).foreach(sp => sp.level = sp.level + 1)
   }
 
-  object BuyHp extends ShopLot {
+  object UpgradeHp extends ShopLot {
     override def satisfyRequirements(cr: CreatureControl): Boolean = true
     override def price(cr: CreatureControl): Int = cr.info.hp
     override def buy(cr: CreatureControl): Unit = cr.info.maxHp += 10
@@ -44,7 +44,7 @@ object ShopLot {
     override def shopImage: String = ""
   }
 
-  object BuyMana extends ShopLot {
+  object UpgradeMana extends ShopLot {
     override def satisfyRequirements(cr: CreatureControl): Boolean = true
     override def price(cr: CreatureControl): Int = cr.info.mana
     override def buy(cr: CreatureControl): Unit = cr.info.maxMana += 10
@@ -52,7 +52,7 @@ object ShopLot {
     override def shopImage: String = ""
   }
 
-  object BuySpeed extends ShopLot {
+  object UpgradeSpeed extends ShopLot {
     override def satisfyRequirements(cr: CreatureControl): Boolean = true
     override def price(cr: CreatureControl): SpellLevel = cr.movement.maxSpeed * 100 toInt
     override def buy(cr: CreatureControl): Unit = cr.movement.setSpeed(cr.movement.maxSpeed * 1.1f)

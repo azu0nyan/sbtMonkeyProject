@@ -5,7 +5,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
+            <level>TRACE</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
@@ -28,16 +28,21 @@
         </encoder>
     </appender>
 
+    <!--my-->
+    <logger name="demoGame.gameplay.spells" level="ERROR"/>
+    <logger name="demoGame.gameplay.shop" level="TRACE"/>
+    <logger name="demoGame.ui.ShopUiScreen" level="TRACE"/>
+
 
     <logger name="ch.qos.logback" level="WARN"/>
     <logger name="com.jme3" level="WARN"/>
 
     <logger name="com.jme3.asset.AssetConfig" level="ERROR"/>
-    <!-- spams   -->
+    <!-- spams other libs   -->
     <logger name="com.jme3.bullet.control.BetterCharacterControl" level="ERROR"/>
     <logger name="com.jme3.util.TangentBinormalGenerator" level="ERROR"/>
+
     <logger name="de.lessvoid.nifty.render.batch" level="ERROR"/>
-    <!--disable    controlDefinition [*] missing.-->
     <logger name="de.lessvoid.nifty.loaderv2.types.ControlType" level="ERROR"/>
 
     <root level="debug">

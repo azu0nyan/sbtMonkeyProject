@@ -15,6 +15,8 @@ import JmeImplicitsFHelper._
 import com.jme3.material.Material
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
 import demoGame.gameplay.shop.ShopControl
+import demoGame.gameplay.shop.ShopLot.{BuySpell, UpgradeHp, UpgradeMana, UpgradeSpeed, UpgradeSpellLevel}
+import demoGame.gameplay.spells.SpellLibrary
 import demoGame.graphics.particles.ParticleUtils
 import jme3tools.optimize.GeometryBatchFactory
 import org.slf4j.LoggerFactory
@@ -34,6 +36,9 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   var playerCharacter: Node = _
   var levelNode: Node = _
   var levelGeomNode: Node = _
+  var chaseCamera:ChaseCamera = _
+
+  var shops: Seq[ShopControl] = Seq()
 
   override def initialize(application: Application): Unit = {
     logger.info(s"Game level init...")
@@ -54,12 +59,13 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
     nav.setObjects(levelSolidObjects)
 
     playerCharacter = spawnPlayerCharacter()
-    val chaseCam = new ChaseCamera(app.getCamera, playerCharacter, app.getInputManager)
-    chaseCam.setInvertVerticalAxis(true)
-    chaseCam.setDragToRotate(false)
-    chaseCam.setMaxDistance(150)
-    chaseCam.setDefaultDistance(100)
-    chaseCam.setLookAtOffset(new Vector3f(0, 3, 0))
+
+    chaseCamera = new ChaseCamera(app.getCamera, playerCharacter, app.getInputManager)
+    chaseCamera.setInvertVerticalAxis(true)
+    chaseCamera.setDragToRotate(false)
+    chaseCamera.setMaxDistance(150)
+    chaseCamera.setDefaultDistance(100)
+    chaseCamera.setLookAtOffset(new Vector3f(0, 3, 0))
 
 
     //    val p = ParticleUtils.makeGeometricBall()
@@ -106,7 +112,7 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
   def spawnPlayerCharacter(): Node = {
     val (sp, cc, nc) = CreatureOps.makeCreature(new Vector3f(0f, 0f, 0f),
-      new CreatureInfo("Player", 1000, 1000, AngryBox(.5f), 20,  10))
+      new CreatureInfo("Player", 1000, 1000, AngryBox(.5f), 200000, 10))
     nc.setEnabled(false)
     CreatureInfo.addAllSpells(sp.getControl(classOf[CreatureControl]))
     sp.getControl(classOf[CreatureControl]).setSpeed(50f)
@@ -118,7 +124,6 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
   def spawnRandomGold() = {
     spawnGold(findSpawnPosition(), (new Random().nextInt(5) + 1) * 100)
   }
-
 
 
   def spawnGold(at: Vector3f, amount: Int) = {
@@ -143,7 +148,15 @@ class GameLevelAppState(val levelName: String = "lvl1", val blockSize: Float = 4
 
   def initWalls(): Seq[Geometry] = {
     //todo add to map
-    new ShopControl(new Vector3f(30, 9.5f, 30), Seq())
+    new ShopControl(new Vector3f(30, 9.5f, 30), Seq(
+      BuySpell(100, SpellLibrary.GeometricBallMaker, "/assets/Interface/spellIcons/geometricBall.png.png", "Fires big sphere filled with deadly geometry."),
+      BuySpell(100, SpellLibrary.GeometricExplosionMaker, "/assets/Interface/spellIcons/geometricExplosion.png", "You inner geometry explodes dealing damage to all nearby enemies."),
+      UpgradeSpellLevel(lvl => lvl * lvl * 100, SpellLibrary.GeometricBallMaker.name, "/assets/Interface/spellIcons/geometricBall.png", "Upgrades geometric ball to contain ever deadliest geometries inside."),
+      UpgradeSpellLevel(lvl => lvl * lvl * 100, SpellLibrary.GeometricExplosionMaker.name, "/assets/Interface/spellIcons/geometricExplosion.png", "Upgrades geometric explosion increasing damage and radius."),
+      UpgradeHp,
+      UpgradeMana,
+      UpgradeSpeed,
+    ))
 
     var solid: Seq[Geometry] = Seq()
 

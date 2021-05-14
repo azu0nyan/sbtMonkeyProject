@@ -2,6 +2,8 @@ package demoGame.ui
 
 import com.jme3.app.{Application, SimpleApplication}
 import com.jme3.app.state.{AbstractAppState, AppStateManager, BaseAppState}
+import com.jme3.input.KeyInput
+import com.jme3.input.controls.{ActionListener, KeyTrigger}
 import de.lessvoid.nifty.Nifty
 import de.lessvoid.nifty.builder.ElementBuilder.{Align, VAlign}
 import de.lessvoid.nifty.builder.{ImageBuilder, LayerBuilder, PanelBuilder, ScreenBuilder, TextBuilder}
@@ -11,23 +13,40 @@ import de.lessvoid.nifty.screen.{Screen, ScreenController}
 import de.lessvoid.nifty.tools.Color
 import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 import demoGame.ui.UiAppState.{gameScreenId, shopScreenId}
+import org.slf4j.LoggerFactory
 
 import java.awt.event.{KeyEvent, KeyListener}
-object UiAppState{
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+
+object UiAppState {
   val gameScreenId = "gameScreenId"
   val shopScreenId = "shopScreenId"
 }
 class UiAppState(
                   gameLevelAppState: GameLevelAppState
-                ) extends BaseAppState with ScreenController {
-  var nifty:Nifty = _
+                ) extends BaseAppState {
+  val log = LoggerFactory.getLogger(this.getClass)
 
-  var gameScreen:GameUiScreen = _
+  var nifty: Nifty = _
 
-  var shopScreen:ShopUiScreen = _
+  var gameScreen: GameUiScreen = _
+
+  var shopScreen: ShopUiScreen = _
+
+
 
   override def initialize(app: Application): Unit = {
+    app.getInputManager.addMapping("shopToggle", new KeyTrigger(KeyInput.KEY_TAB))
+    app.getInputManager.addListener(new ActionListener {
+      override def onAction(name: String, isPressed: Boolean, tpf: Float): Unit = {
 
+        if(!isPressed && name == "shopToggle"){
+          log.info("Toggling screen ")
+          if(canShowShopScreen && nifty.getCurrentScreen != null && nifty.getCurrentScreen.getScreenId == gameScreenId) toShopScreen()
+          else toGameScreen()
+        }
+      }
+    }, "shopToggle")
     import com.jme3.niftygui.NiftyJmeDisplay
     import de.lessvoid.nifty.Nifty
     val niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(app.getAssetManager, app.getInputManager, app.getAudioRenderer, app.getGuiViewPort)
@@ -39,48 +58,43 @@ class UiAppState(
 
 
     gameScreen = new GameUiScreen(nifty, gameLevelAppState)
-    shopScreen = new ShopUiScreen(nifty, null, null)
-//    nifty.gotoScreen(gameScreenId)
+    shopScreen = new ShopUiScreen(nifty, this, gameLevelAppState)
+
+  }
+
+  def canShowShopScreen:Boolean = {
+    shopScreen != null && shopScreen.shop.nonEmpty && shopScreen.buyer.nonEmpty
+  }
+
+  def toShopScreen():Unit = {
+    log.info(s"Going to shop screen..")
     nifty.gotoScreen(shopScreenId)
-  }
-
-  def addButton = {
-    val  screen = nifty.getScreen(gameScreenId)
-    val layer = screen.findElementById("statsPanel");
-
-
-    val button = new TextBuilder {
-      color(new Color(1, .7f, .4f, 1f))
-      //            backgroundColor("#00FF0000")
-      alignLeft()
-      font("Interface/Fonts/Default.fnt")
-      id("goldText2")
-      text("GOAAAAALD:")
-      width("*")
-    }
-
-
-
-    /** nifty is a field */
-    button.build(layer)
-    layer.layoutElements();
-    screen.layoutLayers()
-    //    button.build(nifty, screen, layer);
-
-    /** desperate try */
-    val buttonElement = screen.findElementById("goldText2");
-    buttonElement.show();
-
 
   }
 
-
+  def toGameScreen():Unit = {
+    log.info(s"Going to game screen..")
+    nifty.gotoScreen(gameScreenId)
+    println(nifty.getAllScreensName.asScala.mkString(" "))
+  }
 
 
   override def update(tpf: Float): Unit = {
-    gameScreen.update(tpf)
-  }
+    if (gameLevelAppState.playerCharacter != null) {
+      shopScreen.buyer = Some(gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl]))
+      gameLevelAppState.shops.find(_.buyers.contains(gameLevelAppState.playerCharacter.getControl(classOf[CreatureControl]))) match {
+        case Some(shop) =>
+          shopScreen.shop = Some(shop)
+        case None =>
+          shopScreen.shop = None
+      }
+    }
+    if(!canShowShopScreen && nifty.getCurrentScreen  != null && nifty.getCurrentScreen.getScreenId == shopScreenId)
+      toGameScreen()
 
+    gameScreen.update(tpf)
+    shopScreen.update(tpf)
+  }
 
 
   override def cleanup(app: Application): Unit = {}
@@ -88,8 +102,4 @@ class UiAppState(
   override def onDisable(): Unit = {}
 
 
-  override def bind(nifty: Nifty, screen: Screen): Unit = {
-  }
-  override def onStartScreen(): Unit = {}
-  override def onEndScreen(): Unit = {}
 }
