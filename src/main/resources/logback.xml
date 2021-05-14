@@ -34,6 +34,7 @@
 
     <logger name="com.jme3.asset.AssetConfig" level="ERROR"/>
     <!-- spams   -->
+    <logger name="demoGame.gameplay.spells" level="ERROR"/>
     <logger name="com.jme3.bullet.control.BetterCharacterControl" level="ERROR"/>
     <logger name="com.jme3.util.TangentBinormalGenerator" level="ERROR"/>
     <logger name="de.lessvoid.nifty.render.batch" level="ERROR"/>

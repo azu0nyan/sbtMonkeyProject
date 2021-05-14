@@ -39,40 +39,11 @@ class UiAppState(
 
 
     gameScreen = new GameUiScreen(nifty, gameLevelAppState)
-    shopScreen = new ShopUiScreen(nifty, null, null)
-//    nifty.gotoScreen(gameScreenId)
-    nifty.gotoScreen(shopScreenId)
+//    shopScreen = new ShopUiScreen(nifty, null, null)
+    nifty.gotoScreen(gameScreenId)
+//    nifty.gotoScreen(shopScreenId)
   }
 
-  def addButton = {
-    val  screen = nifty.getScreen(gameScreenId)
-    val layer = screen.findElementById("statsPanel");
-
-
-    val button = new TextBuilder {
-      color(new Color(1, .7f, .4f, 1f))
-      //            backgroundColor("#00FF0000")
-      alignLeft()
-      font("Interface/Fonts/Default.fnt")
-      id("goldText2")
-      text("GOAAAAALD:")
-      width("*")
-    }
-
-
-
-    /** nifty is a field */
-    button.build(layer)
-    layer.layoutElements();
-    screen.layoutLayers()
-    //    button.build(nifty, screen, layer);
-
-    /** desperate try */
-    val buttonElement = screen.findElementById("goldText2");
-    buttonElement.show();
-
-
-  }
 
 
 
