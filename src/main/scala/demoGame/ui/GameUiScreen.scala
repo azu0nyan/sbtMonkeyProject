@@ -67,9 +67,12 @@ class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends S
     for (s <- toAdd) addSpellButton(s)
     for (s <- toRemove) screen.findElementById(spellElementId(s.name)).markForRemoval()
     for (s <- current) {
-      if (s.creature.state.isInstanceOf[Stunned]) UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "STUN")
-      else if (s.manaCost > s.creature.info.mana) UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "NO MANA")
-      else UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "")
+      if (s.creature.state.isInstanceOf[Stunned])
+        UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "STUN")
+      else if (s.manaCost > s.creature.info.mana)
+        UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "NO MANA")
+      else
+        UiElementOps.setText(spellElementNoManaTextId(s.name), gameScreenId, nifty, "")
 
       UiElementOps.setText(spellElementManaCostTextId(s.name), gameScreenId, nifty, s.manaCost.toString)
       UiElementOps.setText(spellElementLevelTextId(s.name), gameScreenId, nifty, s"L:${s.level}  ")
