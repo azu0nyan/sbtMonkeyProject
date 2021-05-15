@@ -11,7 +11,7 @@ import demoGame.gameplay.{CreatureControl, GameLevelAppState}
 import demoGame.ui.UiAppState.gameScreenId
 import org.slf4j.LoggerFactory
 
-class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends ScreenController {
+class GameUiScreen(nifty: Nifty ,uiAppState: UiAppState, gameLevelAppState: GameLevelAppState) extends ScreenController {
   val log = LoggerFactory.getLogger(this.getClass)
 
   val manaPbName = "manaProgressBar"
@@ -19,6 +19,8 @@ class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends S
   val hpPbName = "hpProgressBar"
   val hpPbText = "hpProgressBarText"
   val spellPanelId = "spellPanel"
+
+  val openShopTextId = "openShopText"
 
   val screen = new ScreenBuilder(gameScreenId, GameUiScreen.this) {
     layer(new LayerBuilder {
@@ -51,6 +53,16 @@ class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends S
         height("15%")
         width("50%")
         childLayoutHorizontal()
+      })
+      text(new TextBuilder() {
+        id(openShopTextId)
+        font("Interface/Fonts/Default.fnt")
+        backgroundColor(new Color(0, 0, 0, .2f))
+        alignLeft()
+        valignCenter()
+        text("TAB - Open shop")
+        height("15%")
+        width("15%")
       })
     })
   }.build(nifty)
@@ -171,7 +183,13 @@ class GameUiScreen(nifty: Nifty, gameLevelAppState: GameLevelAppState) extends S
       updateGoldText()
       updateHpBar()
       updateSpellButtons()
+      updateOpenShopText()
     }
+  }
+
+  def updateOpenShopText():Unit = {
+    val el = screen.findElementById(openShopTextId)
+    el.setVisible(uiAppState.canShowShopScreen)
   }
 
   def updateGoldText() = {

@@ -57,7 +57,7 @@ class UiAppState(
     nifty.loadControlFile("nifty-default-controls.xml")
 
 
-    gameScreen = new GameUiScreen(nifty, gameLevelAppState)
+    gameScreen = new GameUiScreen(nifty, this, gameLevelAppState)
     shopScreen = new ShopUiScreen(nifty, this, gameLevelAppState)
 
   }

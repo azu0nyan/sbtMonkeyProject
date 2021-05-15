@@ -32,6 +32,7 @@ class CreatureControl(initialInfo: CreatureInfo)(implicit val level: GameLevelAp
     logger.info(s"Creature ${name} dead")
     getSpatial.removeFromParent()
     level.physicSpace.remove(movement.asInstanceOf[CreatureMovementControl])
+    if(info.gold > 0) new GoldPileControl(getSpatial.getLocalTranslation, info.gold)
   }
 
   def state: CreatureState = _state

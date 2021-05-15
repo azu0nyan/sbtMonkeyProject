@@ -17,7 +17,8 @@ class NavigationControl(control: CreatureMovement,
   var drawPath = false
   var drawingPath: Seq[Spatial] = Seq()
 
-  var arrivalTolerance = .3f
+  //todo fix bots lag with extremely low fps(do only part of movement in update)
+  var arrivalTolerance = 1f
   private var _moveTo: Vector3f = new Vector3f()
 
 

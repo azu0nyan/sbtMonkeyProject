@@ -29,9 +29,9 @@ object CreatureInfo {
   }
   def infoFromType(creatureType: CreatureType): CreatureInfo = creatureType match {
     case AngryBox(angry) =>
-      new CreatureInfo(s"Angry Box ${getId()}", (50 + angry * 50).toInt, 50,  creatureType, 0, 10)
+      new CreatureInfo(s"Angry Box ${getId()}", (50 + angry * 50).toInt, 50,  creatureType, 200, 10)
     case AwakenCylinder() =>
-      new CreatureInfo(s"Awaken Cylinder ${getId()}", 50, 100,  creatureType, 0, 10)
+      new CreatureInfo(s"Awaken Cylinder ${getId()}", 50, 100,  creatureType, 100, 10)
   }
 
 
