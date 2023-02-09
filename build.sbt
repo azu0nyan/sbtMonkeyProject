@@ -31,7 +31,8 @@ val recastLibs = Seq(
   "org.recast4j" % "detour-dynamic" % "1.3.2",
 )
 
-val jmeVer = "3.3.2-stable"
+val jmeVer = "3.5.2-stable"
+val jmeBullet = "3.3.2-stable"
 val jmeLibs = Seq(
   "org.jmonkeyengine" % "jme3-core" % jmeVer,
   "org.jmonkeyengine" % "jme3-desktop" % jmeVer,
@@ -47,8 +48,8 @@ val jmeLibs = Seq(
   "org.jmonkeyengine" % "jme3-terrain" % jmeVer,
   "org.jmonkeyengine" % "jme3-jogg" % jmeVer,
 
-  "org.jmonkeyengine" % "jme3-bullet-native" % jmeVer,
-  "org.jmonkeyengine" % "jme3-bullet" % jmeVer,
+  "org.jmonkeyengine" % "jme3-bullet-native" % jmeBullet,
+  "org.jmonkeyengine" % "jme3-bullet" % jmeBullet,
 
   "org.jmonkeyengine" % "jme3-niftygui" % jmeVer,
 )
