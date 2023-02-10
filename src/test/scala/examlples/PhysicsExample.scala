@@ -123,10 +123,10 @@ class PhysicsExample extends SimpleApplication {
       val a = event.getNodeA
       val b = event.getNodeB
 
-      if(a.getName.startsWith("box") && b.getName == "ball" &&a.isInstanceOf[Geometry]){
+      if(a.getName.startsWith("box") && b.getName == "ball" && a.isInstanceOf[Geometry]){
         a.asInstanceOf[Geometry].getMaterial.setColor("Color", ColorRGBA.Red)
       }
-      if(b.getName.startsWith("box") && a.getName == "ball" &&b.isInstanceOf[Geometry]){
+      if(b.getName.startsWith("box") && a.getName == "ball" && b.isInstanceOf[Geometry]){
         b.asInstanceOf[Geometry].getMaterial.setColor("Color", ColorRGBA.Red)
       }
     })

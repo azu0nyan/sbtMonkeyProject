@@ -2,7 +2,7 @@ name := "sbtMonkeyProject"
 
 version := "0.3"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.10"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8", // Option and arguments on same  line
@@ -58,7 +58,7 @@ libraryDependencies ++= jmeLibs
 libraryDependencies ++= recastLibs
 libraryDependencies += "org.slf4j" % "jul-to-slf4j" % "1.7.22"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
 
 //useCoursier := false

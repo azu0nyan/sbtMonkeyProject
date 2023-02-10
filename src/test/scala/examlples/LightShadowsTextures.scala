@@ -2,7 +2,7 @@ package examlples
 
 
 import com.jme3.app.SimpleApplication
-import com.jme3.light.{AmbientLight, DirectionalLight}
+import com.jme3.light.{AmbientLight, DirectionalLight, PointLight}
 import com.jme3.material.Material
 import com.jme3.math.{ColorRGBA, Vector3f}
 import com.jme3.renderer.queue.RenderQueue.ShadowMode
@@ -33,6 +33,7 @@ class LightShadowsTextures extends SimpleApplication {
     mat.setColor("Diffuse", color)
     mat.setColor("Specular", ColorRGBA.White)
     mat.setFloat("Shininess", 64f)
+    mat.setColor("Ambient", ColorRGBA.Red)
     mat
   }
 
@@ -44,6 +45,7 @@ class LightShadowsTextures extends SimpleApplication {
     mat.setColor("Diffuse", ColorRGBA.White)
     mat.setColor("Specular", ColorRGBA.White)
     mat.setFloat("Shininess", 64f) // [0,128]
+    mat.setColor("Ambient", ColorRGBA.Red)
     mat
   }
 
@@ -61,6 +63,7 @@ class LightShadowsTextures extends SimpleApplication {
   }
 
   def addSun(): DirectionalLight = {
+    new PointLight()
     val sun: DirectionalLight = new DirectionalLight
     sun.setDirection(new Vector3f(1, -1, -(2)).normalizeLocal)
     sun.setColor(ColorRGBA.White)
@@ -74,7 +77,7 @@ class LightShadowsTextures extends SimpleApplication {
     import com.jme3.light.AmbientLight
     import com.jme3.math.ColorRGBA
     val al = new AmbientLight
-    al.setColor(ColorRGBA.White.mult(1.3f))
+    al.setColor(ColorRGBA.White.mult(0.1f))
     rootNode.addLight(al)
     al
   }
@@ -83,7 +86,7 @@ class LightShadowsTextures extends SimpleApplication {
     import com.jme3.post.FilterPostProcessor
     import com.jme3.shadow.DirectionalLightShadowFilter
     import com.jme3.shadow.DirectionalLightShadowRenderer
-    val SHADOWMAP_SIZE = 1024
+    val SHADOWMAP_SIZE = 2048
     val dlsr = new DirectionalLightShadowRenderer(assetManager, SHADOWMAP_SIZE, 3)
     dlsr.setLight(light)
     viewPort.addProcessor(dlsr)
@@ -102,7 +105,7 @@ class LightShadowsTextures extends SimpleApplication {
     import com.jme3.post.FilterPostProcessor
     import com.jme3.post.ssao.SSAOFilter
     val fpp = new FilterPostProcessor(assetManager)
-    val ssaoFilter = new SSAOFilter(12.94f, 43.92f, 0.33f, 0.61f)
+    val ssaoFilter = new SSAOFilter(1.94f, 3.92f, 0.2f, 0.1f)
     fpp.addFilter(ssaoFilter)
     viewPort.addProcessor(fpp)
   }
@@ -117,9 +120,8 @@ class LightShadowsTextures extends SimpleApplication {
   override def simpleInitApp(): Unit = {
     flyCam.setMoveSpeed(100)
     makeBox(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1), "", makeUnshaded(ColorRGBA.Red))
-    makeBox(new Vector3f(5, 0, 0), new Vector3f(1, 1, 1), "", makeShaded(ColorRGBA.Red))
-    makeBox(new Vector3f(-5, 0, 0), new Vector3f(1, 1, 1), "",
-      makeShadedTextured("assets/Textures/lnmo.jpg"))
+    makeBox(new Vector3f(5, 0, 0), new Vector3f(1, 20, 1), "", makeShaded(ColorRGBA.Red))
+    makeBox(new Vector3f(-5, 0, 0), new Vector3f(1, 1, 1), "",  makeShadedTextured("assets/Textures/lnmo.jpg"))
     makeBox(new Vector3f(0, -2f, 0), new Vector3f(100, 0.1f, 100), "ground", makeShaded(ColorRGBA.White))
     val sun = addSun()
     addAmbient()
