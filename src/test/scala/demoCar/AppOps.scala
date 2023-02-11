@@ -45,12 +45,13 @@ abstract class AppOps extends SimpleApplication {
   }
 
 
-  def makeCylinder(trans: Transform, name: String, mat: Material, parent: Option[Node] = None, radius:Float, height:Float, axisSamples: Int = 1, radialSamples: Int = 16): Geometry = {
-    val c = new Cylinder(axisSamples, radialSamples, radius, height)
+  def makeCylinder(trans: Transform, name: String, mat: Material, parent: Option[Node] = None, radius:Float, height:Float, axisSamples: Int = 2, radialSamples: Int = 16): Geometry = {
+    val c = new Cylinder(axisSamples, radialSamples, radius, height, true)
     val cylinder = new Geometry(name, c)
 
     cylinder.setMaterial(mat)
     cylinder.setLocalTransform(trans)
+    parent.getOrElse(rootNode).attachChild(cylinder)
 
     TangentBinormalGenerator.generate(cylinder)
     cylinder.setShadowMode(ShadowMode.CastAndReceive)
