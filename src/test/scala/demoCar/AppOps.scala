@@ -29,6 +29,7 @@ abstract class AppOps extends SimpleApplication {
     mat.setBoolean("UseMaterialColors", true)
     mat.setColor("Diffuse", color)
     mat.setColor("Specular", ColorRGBA.White)
+    mat.setColor("Ambient", ColorRGBA.White)
     mat.setFloat("Shininess", 64f)
     mat
   }
@@ -41,6 +42,7 @@ abstract class AppOps extends SimpleApplication {
     mat.setColor("Diffuse", ColorRGBA.White)
     mat.setColor("Specular", ColorRGBA.White)
     mat.setFloat("Shininess", 64f) // [0,128]
+    mat.setColor("Ambient", ColorRGBA.White)
     mat
   }
 
@@ -85,7 +87,7 @@ abstract class AppOps extends SimpleApplication {
     import com.jme3.light.AmbientLight
     import com.jme3.math.ColorRGBA
     val al = new AmbientLight
-    al.setColor(ColorRGBA.White.mult(1.3f))
+    al.setColor(ColorRGBA.White.mult(0.3f))
     rootNode.addLight(al)
     al
   }
